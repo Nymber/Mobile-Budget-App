@@ -1,0 +1,8 @@
+{
+    "docwriter.style": "Auto-detect",
+    "cSpell.words": [
+        "itsdangerous"
+    ],
+    "wolf.disableHotModeWarning": true,
+    "python.analysis.typeCheckingMode": "basic"
+}

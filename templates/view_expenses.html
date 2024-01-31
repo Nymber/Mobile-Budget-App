@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Expenses</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+</head>
+<body>
+    <h1>View Expenses</h1>
+
+    <div class="container">
+        <table id="expensesTable" class="display">
+            <thead>
+                <tr>
+                    <th>Expense ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Repeating</th>
+                    <th>Timestamp</th>
+                    <th>Actions</th> <!-- Add a new column for actions -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense.id }}</td>
+                    <td>{{ expense.name }}</td>
+                    <td>{{ expense.price }}</td>
+                    <td>{{ "Yes" if expense.repeating else "No" }}</td>
+                    <td>{{ expense.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>
+                        <form action="{{ url_for('delete_expense', expense_id=expense.id) }}" method="POST">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="{{ url_for('dashboard') }}" class="btn">Go back to Dashboard</a>
+    <footer>
+        <p>&copy; 2024 YourCompany. All rights reserved.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready( function () {
+            $('#expensesTable').DataTable();
+        });
+    </script>
+</body>
+</html>

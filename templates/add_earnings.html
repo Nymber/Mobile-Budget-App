@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Earnings</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}">
+    <script>
+        function showHideForms() {
+            var hourlyFields = document.getElementById('hourly_fields');
+            var salaryFields = document.getElementById('salary_fields');
+            var hourlyRadio = document.getElementById('hourly');
+            var salaryRadio = document.getElementById('salary');
+        
+            if (hourlyRadio.checked) {
+                // Reset salary fields to default values
+                document.getElementById('salary_input').value = 0; // BEGIN: Set salary to 0 by default
+                // Show hourly fields
+                hourlyFields.style.display = "block";
+                // Hide salary fields
+                salaryFields.style.display = "none";
+            } else if (salaryRadio.checked) {
+                // Reset hourly fields to default values
+                document.getElementById('hourly_rate').value = 0;
+                document.getElementById('hours').value = 0;
+                document.getElementById('cash_tips').value = 0;
+                // Show salary fields
+                salaryFields.style.display = "block";
+                // Hide hourly fields
+                hourlyFields.style.display = "none";
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Daily Earnings</h1>
+    <form method="POST" action="{{ url_for('add_earnings') }}">
+        <input type="radio" id="hourly" name="earnings_type" value="hourly" checked onclick="showHideForms()">
+        <label for="hourly">Hourly</label>
+        <input type="radio" id="salary" name="earnings_type" value="salary" onclick="showHideForms()">
+        <label for="salary">Salary</label><br><br>
+    
+        <div id="hourly_fields">
+            <label for="hourly_rate">Hourly Rate:</label><br>
+            <input type="number" id="hourly_rate" name="hourly_rate" step="0.01" min="0" value="{{ last_hourly_rate }}" required><br>
+            <label for="hours">Hours Worked:</label><br>
+            <input type="number" id="hours" name="hours" step="0.01" min="0" value="0" required><br>
+        
+            <label for="cash_tips">Cash Tips:</label><br>
+            <input type="number" id="cash_tips" name="cash_tips" step="0.01" min="0" value="0" required><br>
+        </div>
+        
+        <div id="salary_fields" style="display: none;">
+            <label for="salary_input">Salary:</label><br>
+            <input type="number" id="salary_input" name="salary_input" step="0.01" min="0" value="0" required><br>
+        </div>
+    
+        <input type="submit" value="Add Earnings">
+    </form>
+    
+    <a href="{{ url_for('dashboard') }}">Go back to Dashboard</a>
+    <footer>
+        <p>&copy; 2024 Shimi. All rights reserved.</p>
+    </footer>
+</body>
+</html>

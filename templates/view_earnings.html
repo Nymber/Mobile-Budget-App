@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Earnings</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+</head>
+<body>
+    <h1>View Earnings</h1>
+
+    <div class="container">
+        <table id="earningsTable" class="display">
+            <thead>
+                <tr>
+                    <th>Earning ID</th>
+                    <th>Hourly Rate</th>
+                    <th>Hours</th>
+                    <th>Cash Tips</th>
+                    <th>Salary</th>
+                    <th>Timestamp</th>
+                    <th>Actions</th> <!-- Add a new column for actions -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for earning in earnings %}
+                <tr>
+                    {% if earning.hourly_rate %}
+                        <td>{{ earning.id }}</td>
+                        <td>{{ earning.hourly_rate }}</td>
+                        <td>{{ earning.hours }}</td>
+                        <td>{{ earning.cash_tips }}</td>
+                        <td>{{ earning.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td>
+                            <form action="{{ url_for('delete_earning', earning_id=earning.id) }}" method="POST">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    {% else %}
+                        <td>{{ earning.salary }}</td>
+                        <td>
+                            <form action="{{ url_for('delete_earning', earning_id=earning.id) }}" method="POST">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="{{ url_for('dashboard') }}" class="btn">Go back to Dashboard</a> <!-- Corrected the url tag -->
+    <footer>
+        <p>&copy; 2024 YourCompany. All rights reserved.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready( function () {
+            $('#earningsTable').DataTable();
+        });
+    </script>
+</body>
+</html>

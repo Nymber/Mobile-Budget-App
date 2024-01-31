@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Welcome, {{ username }}!</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <div class="budget-box">
+                <h2 class="center">Budget Information</h2>
+                <form method="post" action="/dashboard">
+                    <label for="monthly_savings_goal">Set Monthly Savings Goal:</label>
+                    <input type="number" id="monthly_savings_goal" name="monthly_savings_goal" step="0.01" value="{{ monthly_savings_goal }}">
+                    <button type="submit" class="btn">Set Goal</button>
+                </form>
+                <p><strong>Monthly Savings Goal:</strong> {{ monthly_savings_goal|round(2)}}</p>
+                <p><strong>Todays Spending limit:</strong> {{ daily_limit|round(2)}}</p>
+                <p><strong>Todays Spending:</strong> {{ total_money_spent_today|round(2)}}</p>
+                <p><strong>Daily Earnings:</strong> {{ daily_earnings|round(2)}}</p>
+                <p><strong>Weekly Earnings:</strong> {{ weekly_earnings|round(2)}}</p>
+                <p><strong>Monthly Earnings:</strong> {{ monthly_earnings|round(2)}}</p>
+                <p><strong>Daily Expenses:</strong> {{ daily_expenses_total|round(2)}}</p>
+                <p><strong>Total Monthly Expenses:</strong> {{ monthly_expenses|round(2)}}</p>
+                </form>
+                <form method="post" action="/dashboard">
+        
+                <section class="center-buttons">
+                    <a href="/view_expenses" class="btn">View Expenses</a>
+                    <a href="/view_earnings" class="btn">View Earnings</a>
+                    <a href="/add_expense" class="btn">Add Expense</a>
+                    <a href="/add_earnings" class="btn">Add Daily Earnings</a>
+                </section>
+                </form>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Shimi. All rights reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Expense</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
+</head>
+<body>
+    <h1>Add Expense</h1>
+
+    <form method="POST" action="{{ url_for('add_expense') }}">
+        <div class="center-label">
+            <label for="name">Expense Name:</label><br>
+        </div>
+    
+        <input type="text" id="name" name="name" required><br>
+    
+        <div class="center-label">
+            <label for="price">Price:</label><br>
+        </div>
+    
+        <input type="number" id="price" name="price" step="0.01" min="0" required><br>
+        
+        <div class="center-label">
+            <label for="repeating">Repeating Monthly?:</label>
+        </div>
+        
+        <input type="checkbox" id="repeating" name="repeating"><br>
+        
+        <!-- Include the username field as a hidden input -->
+        <input type="hidden" name="username" value="{{ username }}">
+        
+        <input type="submit" value="Add Expense">
+    </form>
+    <a href="{{ url_for('dashboard') }}" class="btn">Go back to Dashboard</a>
+    <!-- Add delete buttons for each expense -->
+    {% for expense in expenses %}
+        <form method="POST" action="{{ url_for('delete_expense', expense_id=expense.id) }}">
+            <p>{{ expense.name }} - ${{ expense.price }}</p>
+            <input type="submit" value="Delete">
+        </form>
+    {% endfor %}
+
+    <footer>
+        <p>&copy; 2024 Shimi. All rights reserved.</p>
+    </footer>
+</body>
+</html>
