@@ -1,7 +1,12 @@
 {
     "docwriter.style": "Auto-detect",
     "cSpell.words": [
-        "itsdangerous"
+        "apscheduler",
+        "dateutil",
+        "itsdangerous",
+        "relativedelta",
+        "statespace",
+        "statsmodels"
     ],
     "wolf.disableHotModeWarning": true,
     "python.analysis.typeCheckingMode": "basic"

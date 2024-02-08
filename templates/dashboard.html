@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}">
 </head>
 <body>
     <header>
@@ -25,24 +25,25 @@
                     <input type="number" id="monthly_savings_goal" name="monthly_savings_goal" step="0.01" value="{{ monthly_savings_goal }}">
                     <button type="submit" class="btn">Set Goal</button>
                 </form>
-                <p><strong>Monthly Savings Goal:</strong> {{ monthly_savings_goal|round(2)}}</p>
-                <p><strong>Todays Spending limit:</strong> {{ daily_limit|round(2)}}</p>
-                <p><strong>Todays Spending:</strong> {{ total_money_spent_today|round(2)}}</p>
-                <p><strong>Daily Earnings:</strong> {{ daily_earnings|round(2)}}</p>
-                <p><strong>Weekly Earnings:</strong> {{ weekly_earnings|round(2)}}</p>
-                <p><strong>Monthly Earnings:</strong> {{ monthly_earnings|round(2)}}</p>
-                <p><strong>Daily Expenses:</strong> {{ daily_expenses_total|round(2)}}</p>
-                <p><strong>Total Monthly Expenses:</strong> {{ monthly_expenses|round(2)}}</p>
-                </form>
-                <form method="post" action="/dashboard">
-        
-                <section class="center-buttons">
-                    <a href="/view_expenses" class="btn">View Expenses</a>
-                    <a href="/view_earnings" class="btn">View Earnings</a>
-                    <a href="/add_expense" class="btn">Add Expense</a>
-                    <a href="/add_earnings" class="btn">Add Daily Earnings</a>
-                </section>
-                </form>
+                <p><strong>Monthly Savings Goal:</strong> ${{ monthly_savings_goal|round_env(2) }}</p>
+                <p><strong>Daily Spending Limit:</strong> ${{ daily_limit|round_env(2) }}</p>
+                <p><strong>Total Money Spent In 24 Hours:</strong> ${{ total_money_spent_today|round_env(2) }}</p>
+                <p><strong>Daily Earnings:</strong> ${{ daily_earnings|round_env(2) }}</p>
+                <p><strong>Weekly Earnings:</strong> ${{ weekly_earnings|round_env(2) }}</p>
+                <p><strong>Monthly Earnings:</strong> ${{ monthly_earnings|round_env(2) }}</p>
+                <p><strong>Monthly Expenses (Non-Repeating):</strong> ${{monthly_expenses_non_repeating |round_env(2) }}</p>
+                <p><strong>Monthly Expenses (Repeating):</strong> ${{monthly_expenses|round_env(2) }}</p>
+                <p><strong>Monthly Expenses (Total):</strong> ${{total_expenses|round_env(2) }}</p>
+                <p><strong>Daily Expenses:</strong> ${{ daily_expenses_total|round_env(2) }}</p>
+                <p><strong>Savings Rate:</strong> {{ savings_rate|round_env(2) }}%</p>
+            </div>
+        </section>
+        <section>
+            <div class="center-buttons">
+                <a href="/view_expenses" class="btn">View Expenses</a>
+                <a href="/view_earnings" class="btn">View Earnings</a>
+                <a href="/add_expense" class="btn">Add Expense</a>
+                <a href="/add_earnings" class="btn">Add Daily Earnings</a>
             </div>
         </section>
     </main>
