@@ -38,7 +38,7 @@
                     <td>{{ "Yes" if expense.repeating else "No" }}</td>
                     <td>{{ expense.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                     <td>
-                        <form id="deleteForm-{{ expense.id }}" action="{{ url_for('delete_expense', expense_id=expense.id) }}" method="POST">
+                        <form id="deleteForm-{{ expense.id }}" action="{{ url_for('routes.delete_expense', expense_id=expense.id) }}" method="POST">
                             <button type="button" class="btn btn-danger" onclick="confirmDelete('{{ expense.id }}')">Delete</button>
                         </form>
                     </td>
@@ -47,7 +47,7 @@
             </tbody>
         </table>
     </div>
-    <a href="{{ url_for('dashboard') }}" class="btn">Go back to Dashboard</a>
+    <a href="{{ url_for('routes.dashboard') }}" class="btn">Go back to Dashboard</a>
     <footer>
         <p>&copy; 2024 YourCompany. All rights reserved.</p>
     </footer>

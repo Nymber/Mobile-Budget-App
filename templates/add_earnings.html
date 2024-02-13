@@ -34,7 +34,7 @@
 </head>
 <body>
     <h1>Daily Earnings</h1>
-    <form method="POST" action="{{ url_for('add_earnings') }}">
+    <form method="POST" action="{{ url_for('routes.add_earnings') }}">
         <input type="radio" id="hourly" name="earnings_type" value="hourly" checked onclick="showHideForms()">
         <label for="hourly">Hourly</label>
         <input type="radio" id="salary" name="earnings_type" value="salary" onclick="showHideForms()">
@@ -58,7 +58,7 @@
         <input type="submit" value="Add Earnings">
     </form>
     
-    <a href="{{ url_for('dashboard') }}">Go back to Dashboard</a>
+    <a href="{{ url_for('routes.dashboard') }}">Go back to Dashboard</a>
     <footer>
         <p>&copy; 2024 Shimi. All rights reserved.</p>
     </footer>
