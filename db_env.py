@@ -4,6 +4,7 @@ from app_settings import app
 from datetime import datetime, timedelta, timezone
 
 db = SQLAlchemy(app)
+
 # Database models
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -40,3 +41,17 @@ class Account(db.Model):
         self.email = email
         self.ip_address = ip_address
         self.spending_limit = spending_limit
+
+class InventoryItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    item_name = db.Column(db.String(100), nullable=False)
+    quantity = db.Column(db.Float, nullable=False)
+    unit_of_measurement = db.Column(db.String(20), nullable=False)  # For example: oz, gal, etc.
+    username = db.Column(db.String(100), nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def __init__(self, item_name, quantity, unit_of_measurement, username):
+        self.item_name = item_name
+        self.quantity = quantity
+        self.unit_of_measurement = unit_of_measurement
+        self.username = username

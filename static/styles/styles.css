@@ -215,3 +215,7 @@ tbody tr:nth-child(even) {
 tbody tr:hover {
     background-color: #777777; /* Lighter gray background color on hover */
 }
+.selected {
+    background-color: green; /* Change the background color to green */
+    color: white; /* Change the text color to white */
+}

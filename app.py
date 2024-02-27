@@ -1,8 +1,8 @@
 from db_env import db
 from app_settings import app
-from routes import routes
+from routes import routes, inventory_routes
 app.register_blueprint(routes)
-
+app.register_blueprint(inventory_routes)
 
 if __name__ == '__main__':
     # Create the database tables

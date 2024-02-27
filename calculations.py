@@ -2,32 +2,27 @@ import db_env
 from db_env import db
 import env
 from sqlalchemy import func
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 def calculate_non_repeatable_expenses_last_24_hours(username, current_date):
     try:
-        # Calculate the start and end timestamps for the last 24 hours
         start_time = current_date - timedelta(hours=24)
         end_time = current_date
 
-        # Retrieve non-repeatable expenses made by the user within the last 24 hours
         non_repeatable_expenses = db_env.Expense.query.filter(
             db_env.Expense.username == username,
             db_env.Expense.timestamp >= start_time,
             db_env.Expense.timestamp <= end_time,
-            db_env.Expense.repeating == 'No'  # Assuming 'No' is used for non-repeating expenses
+            db_env.Expense.repeating.is_(False)  # Consider both repeating and non-repeating expenses
         ).all()
 
-        # Calculate the total of non-repeatable expenses made in the last 24 hours
         total_expenses_last_24_hours = sum(expense.price for expense in non_repeatable_expenses)
 
         return total_expenses_last_24_hours
     except Exception as e:
-        # Log the exception for debugging purposes
         print(f"Error calculating non-repeatable expenses: {str(e)}")
-        return 0  # Return a default value or handle the error as needed
+        return 0
 
-    return total_expenses_last_24_hours
 
 def calculate_daily_limit(username, current_date):
     # Retrieve account information
@@ -35,34 +30,25 @@ def calculate_daily_limit(username, current_date):
 
     if account:
         # Calculate total monthly expenses for non-repeating expenses
-        start_of_month = current_date - timedelta(days=30)
-        end_of_month = start_of_month + timedelta(days=30)
         monthly_expenses_non_repeating = calculate_monthly_expenses(username)
-
-        # Calculate daily savings needed (monthly savings goal divided by 30)
         daily_savings_needed = account.monthly_savings_goal / 30
 
-        # Total daily expenses including the savings needed portion
+        # Calculate daily expenses
         daily_expenses_total = monthly_expenses_non_repeating / 30 + daily_savings_needed
-
-        # Calculate weekly earnings
-        start_of_week = current_date - timedelta(days=current_date.weekday())
-        end_of_week = start_of_week + timedelta(days=7)
-        weekly_earnings = calculate_weekly_earnings(username, start_of_week, end_of_week)
 
         # Calculate daily earnings
         daily_earnings = calculate_daily_earnings(username, current_date)
 
         # Calculate total non-repeatable expenses made in the last 24 hours
-        non_repeatable_expenses_last_24_hours = calculate_non_repeatable_expenses_last_24_hours(username, current_date)
+        non_repeatable_expenses_last_24_hours = calculate_total_non_repeating_expenses_within_24_hours(username, current_date)
 
         # Subtract non-repeatable expenses made in the last 24 hours from daily expenses total
         daily_expenses_total -= non_repeatable_expenses_last_24_hours
 
         # Subtract spending limit from the daily limit
-        spending_limit = account.spending_limit  # Retrieve spending limit from the account
-        daily_limit = max(0, weekly_earnings / 7 - daily_expenses_total + spending_limit)
-        
+        spending_limit = account.spending_limit
+        daily_limit = max(0, daily_earnings - daily_expenses_total + spending_limit)
+
         return env.round_env(daily_limit, 2)
 
     return 0  # Default to 0 if account not found

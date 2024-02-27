@@ -1,7 +1,8 @@
 import calculations
 from datetime import datetime, timedelta, timezone
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify, flash
 import db_env
+
 from db_env import db
 
 routes = Blueprint('routes', __name__)
@@ -22,7 +23,6 @@ def login():
             return redirect(url_for('routes.dashboard'))
     return render_template('login.html')
 
-
 @routes.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -36,7 +36,56 @@ def register():
         return redirect(url_for('routes.login'))
     return render_template('register.html')
 
+@routes.route('/inventory', methods=['GET', 'POST'])
+def inventory():
+    if 'username' in session:
+        # Initialize variables
+        username = session['username']
+        current_date = datetime.utcnow()
+        # Retrieve account information
+        account = db_env.Account.query.filter_by(username=username).first()
 
+        if account:
+            if request.method == 'POST':
+                # Handle form submission for adding items to inventory
+                item_name = request.form['item_name']
+                quantity = float(request.form['quantity'])
+                unit_of_measurement = request.form['unit_of_measurement']
+                # Create a new InventoryItem object and add it to the database
+                new_item = db_env.InventoryItem(item_name=item_name, quantity=quantity,
+                                                unit_of_measurement=unit_of_measurement, username=username)
+                db.session.add(new_item)
+                db.session.commit()
+
+            # Retrieve inventory items for the current user
+            inventory_items = db_env.InventoryItem.query.filter_by(username=username).all()
+
+            # Render the inventory template with inventory data
+            return render_template('inventory.html',
+                                   username=username,
+                                   inventory_items=inventory_items)
+        else:
+            return redirect(url_for('routes.login'))
+
+    return redirect(url_for('routes.login'))
+
+@routes.route('/fetch_inventory_items', methods=['GET'])
+def fetch_inventory_items():
+    if 'username' in session:
+        username = session['username']
+        # Retrieve inventory items for the current user
+        inventory_items = db_env.InventoryItem.query.filter_by(username=username).all()
+
+        # Construct HTML content for inventory items
+        html_content = "<ul>"
+        for item in inventory_items:
+            html_content += "<li>" + item.item_name + " - Quantity: " + str(item.quantity) + " " + item.unit_of_measurement + "</li>"
+        html_content += "</ul>"
+
+        return html_content
+    else:
+        return jsonify({'error': 'User not logged in'})
+    
 @routes.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     if 'username' in session:
@@ -141,14 +190,6 @@ def logout():
     return redirect(url_for('routes.index'))
 
 
-@routes.route('/view_expenses')
-def view_expenses():
-    if 'username' in session:
-        expenses = db_env.Expense.query.filter_by(username=session['username']).all()
-        return render_template('view_expenses.html', expenses=expenses)
-    return redirect(url_for('routes.login'))
-
-
 @routes.route('/add_expense', methods=['GET', 'POST'])
 def add_expense():
     if request.method == 'POST':
@@ -176,44 +217,46 @@ def add_expense():
 
 @routes.route('/add_earnings', methods=['GET', 'POST'])
 def add_earnings():
-    last_hourly_rate = db_env.DailyEarning.query.filter_by(username=session['username']).order_by(
-        db_env.DailyEarning.timestamp.desc()).first()
-    last_hourly_rate = last_hourly_rate.hourly_rate if last_hourly_rate else 0
-    if request.method == 'POST':
-        try:
-            earnings = None
-            if request.form.get('earnings_type') == 'hourly':
-                hourly_rate = float(request.form['hourly_rate'])
-                hours = float(request.form['hours'])
-                cash_tips = float(request.form['cash_tips'])
+    if 'username' in session:
+        last_hourly_rate = db_env.DailyEarning.query.filter_by(username=session['username']).order_by(
+            db_env.DailyEarning.timestamp.desc()).first()
+        last_hourly_rate = last_hourly_rate.hourly_rate if last_hourly_rate else 0
+        if request.method == 'POST':
+            try:
+                earnings = None
+                if request.form.get('earnings_type') == 'hourly':
+                    hourly_rate = float(request.form['hourly_rate'])
+                    hours = float(request.form['hours'])
+                    cash_tips = float(request.form['cash_tips'])
 
-                earnings = db_env.DailyEarning()
-                earnings.hourly_rate = hourly_rate
-                earnings.hours = hours
-                earnings.cash_tips = cash_tips
-                earnings.salary = 0
-                earnings.username = session['username']
-            elif request.form.get('earnings_type') == 'salary':
-                salary = float(request.form['salary_input'])
+                    earnings = db_env.DailyEarning()
+                    earnings.hourly_rate = hourly_rate
+                    earnings.hours = hours
+                    earnings.cash_tips = cash_tips
+                    earnings.salary = 0
+                    earnings.username = session['username']
+                elif request.form.get('earnings_type') == 'salary':
+                    salary = float(request.form['salary_input'])
 
-                earnings = db_env.DailyEarning()
-                earnings.hourly_rate = 0
-                earnings.hours = 0
-                earnings.cash_tips = 0
-                earnings.salary = salary
-                earnings.username = session['username']
+                    earnings = db_env.DailyEarning()
+                    earnings.hourly_rate = 0
+                    earnings.hours = 0
+                    earnings.cash_tips = 0
+                    earnings.salary = salary
+                    earnings.username = session['username']
 
-            if earnings:
-                earnings.timestamp = datetime.now(timezone.utc)
+                if earnings:
+                    earnings.timestamp = datetime.now(timezone.utc)
 
-            db.session.add(earnings)
-            db.session.commit()
-            return redirect(url_for('routes.dashboard'))
-        except Exception as e:
-            return render_template('error.html', error=str(e))
+                db.session.add(earnings)
+                db.session.commit()
+                return redirect(url_for('routes.dashboard'))
+            except Exception as e:
+                return render_template('error.html', error=str(e))
 
-    return render_template('add_earnings.html', last_hourly_rate=last_hourly_rate)
-
+        return render_template('add_earnings.html', last_hourly_rate=last_hourly_rate)
+    else:
+        return redirect(url_for('routes.login'))
 
 @routes.route('/view_earnings')
 def view_earnings():
@@ -221,6 +264,14 @@ def view_earnings():
         earnings = db_env.DailyEarning.query.filter_by(username=session['username']).all()
         return render_template('view_earnings.html', earnings=earnings)
     return redirect(url_for('routes.login'))
+
+@routes.route('/view_expenses')
+def view_expenses():
+    if 'username' in session:
+        expenses = db_env.Expense.query.filter_by(username=session['username']).all()
+        return render_template('view_expenses.html', expenses=expenses)
+    return redirect(url_for('routes.login'))
+
 
 
 @routes.route('/delete_expense/<int:expense_id>', methods=['POST'])
@@ -230,10 +281,102 @@ def delete_expense(expense_id):
     db.session.commit()
     return redirect(url_for('routes.view_expenses'))
 
-
 @routes.route('/delete_earning/<int:earning_id>', methods=['POST'])
 def delete_earning(earning_id):
     earning = db_env.DailyEarning.query.get_or_404(earning_id)
     db.session.delete(earning)
     db.session.commit()
     return redirect(url_for('routes.view_earnings'))
+
+
+# Define a Blueprint for routes
+inventory_routes = Blueprint('inventory_routes', __name__)
+
+# Route to view inventory items
+@inventory_routes.route('/view_inventory', methods=['GET'])
+def view_inventory():
+    if 'username' in session:
+        inventory_items = db_env.InventoryItem.query.filter_by(username=session['username']).all()
+        return render_template('inventory.html', inventory_items=inventory_items)
+    return redirect(url_for('routes.login'))
+
+# Helper function to retrieve inventory items
+@inventory_routes.route('/get_inventory_items', methods=['GET'])
+def get_inventory_items():
+    if 'username' in session:
+        # Retrieve inventory items from the database
+        inventory_items = db_env.InventoryItem.query.filter_by(username=session['username']).all()
+    
+        # Convert inventory items to a list of dictionaries
+        inventory_list = []
+        for item in inventory_items:
+            item_dict = {
+                'id': item.id,
+                'item_name': item.item_name,
+                'quantity': item.quantity,
+                'unit_of_measurement': item.unit_of_measurement
+            }
+            inventory_list.append(item_dict)
+        return render_template('view_inventory.html', inventory_items=inventory_items)
+    return redirect(url_for('routes.login'))
+
+@inventory_routes.route('/update_inventory_item/<string:item_id>', methods=['POST'])
+def update_inventory_item(item_id):
+    # Receive data from the form submission
+    if 'username' in session:
+        # Receive data from the form submission
+        new_item_name = request.form.get('itemName')
+        new_quantity = request.form.get('quantity')
+        new_unit_of_measurement = request.form.get('unitOfMeasurement')
+
+        # Query the database to find the specific InventoryItem by its ID
+        item = db_env.InventoryItem.query.get(item_id)
+
+        if item:
+            # Update the relevant fields of the InventoryItem object
+            item.item_name = new_item_name
+            item.quantity = new_quantity
+            item.unit_of_measurement = new_unit_of_measurement
+
+            # Commit the changes to the database
+            db.session.commit()
+
+            # Redirect to the appropriate page after the update operation
+            return redirect(url_for('inventory_routes.view_inventory'))
+        else:
+            # Handle the case where the item with the given ID does not exist
+            flash('Item not found.', 'error')
+            return redirect(url_for('inventory_routes.view_inventory'))
+    else:
+        # If the user is not logged in, redirect to the login page
+        return redirect(url_for('routes.login'))
+    
+@inventory_routes.route('/delete_inventory_item/<int:item_id>', methods=['POST'])
+def delete_inventory_item(item_id):
+    if 'username' in session:
+        # Query the database to find the inventory item by its ID
+        inventory_item = db_env.InventoryItem.query.get(item_id)
+
+        # Check if the inventory item exists and belongs to the current user
+        if inventory_item and inventory_item.username == session['username']:
+            # Delete the inventory item from the database
+            db.session.delete(inventory_item)
+            db.session.commit()
+            flash('Inventory item deleted successfully', 'success')
+        else:
+            flash('Inventory item not found or you do not have permission to delete it', 'error')
+
+        # Redirect to the inventory view after deletion
+        return redirect(url_for('inventory_routes.view_inventory'))
+    else:
+        # If the user is not logged in, redirect to the login page
+        return redirect(url_for('routes.login'))
+    
+@inventory_routes.route('/get_updated_table_data', methods=['GET'])
+def get_updated_table_data():
+    if 'username' in session:
+        # Render the table body with the updated inventory data
+        return render_template('view_inventory.html', inventory_items=db_env.InventoryItem.query.filter_by(username=session['username']).all())
+    else:
+        # If the user is not logged in, redirect to the login page
+        return redirect(url_for('routes.login'))

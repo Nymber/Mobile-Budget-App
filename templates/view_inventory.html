@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Inventory Items</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <style>
+        /* Additional CSS styles for enhanced visual appearance */
+        table.dataTable tbody tr:hover {
+            background-color: #f5f5f5;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Inventory Items</h1>
+    <a href="{{ url_for('routes.dashboard') }}" class="btn">Go back to Dashboard</a>
+    <a href="{{ url_for('inventory_routes.view_inventory') }}" class="btn">Add Item</a>
+    <div class="container">
+        <table id="inventoryTable" class="display">
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>Item Name</th>
+                    <th>Quantity</th>
+                    <th>Unit of Measurement</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in inventory_items %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.item_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.unit_of_measurement }}</td>
+                    <td>
+                        <form id="updateForm-{{ item.id }}" action="{{ url_for('inventory_routes.update_inventory_item', item_id=item.id) }}" method="POST" onsubmit="reloadPage()">
+                            <button type="button" class="btn btn-primary update-btn" onclick="updateItem({{ item.id }})">Update</button>
+                        </form>
+                        <form id="deleteForm-{{ item.id }}" action="{{ url_for('inventory_routes.delete_inventory_item', item_id=item.id) }}" method="POST" >
+                            <button type="button" class="btn btn-danger" onclick="confirmDelete({{ item.id }})">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <footer>
+        <p>&copy; 2024 YourCompany. All rights reserved.</p>
+    </footer>
+
+    <!-- Modal for updating inventory item -->
+    <div id="updateModal" class="modal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateModalLabel">Update Inventory Item</h5>
+                </div>
+                <div class="modal-body">
+                    <!-- Form for updating inventory item -->
+                    <form id="updateItemForm">
+                        <!-- Input fields for updating item values -->
+                        <!-- You can customize the input fields based on your requirements -->
+                        <div class="mb-3">
+                            <label for="itemName" class="form-label">Item Name</label>
+                            <input type="text" class="form-control" id="itemName" name="itemName">
+                        </div>
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity">
+                        </div>
+                        <div class="mb-3">
+                            <label for="unitOfMeasurement" class="form-label">Unit of Measurement</label>
+                            <input type="text" class="form-control" id="unitOfMeasurement" name="unitOfMeasurement">
+                        </div>
+                        <!-- Hidden input field for item ID -->
+                        <input type="hidden" id="itemId" name="itemId">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="submitUpdate()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready( function () {
+            $('#inventoryTable').DataTable({
+                "paging": true, // Enable pagination
+                "searching": true, // Enable search functionality
+                "order": [[0, 'desc']], // Order by Item ID (descending) by default
+                "columnDefs": [{ "orderable": false, "targets": -1 }] // Disable sorting for last column (Actions)
+            });
+        });
+    
+        // Function to confirm delete action
+        function confirmDelete(itemId) {
+            if (confirm('Are you sure you want to delete this inventory item?')) {
+                document.getElementById('deleteForm-' + itemId).submit();
+            }
+        }
+    
+        // Function to handle update item action
+        function updateItem(itemId) {
+            // Remove 'selected' class from all update buttons
+            $('.update-btn').removeClass('selected');
+            // Add 'selected' class to the clicked update button
+            $('#updateForm-' + itemId + ' .update-btn').addClass('selected');
+        
+            // Update the hidden input field with the item ID
+            $('#itemId').val(itemId);
+            
+            // Retrieve values from the updateItemForm
+            var itemName = $('#itemName').val();
+            var quantity = $('#quantity').val();
+            var unitOfMeasurement = $('#unitOfMeasurement').val();
+            
+            // Set the values in the modal input fields
+            $('#itemName').val(itemName);
+            $('#quantity').val(quantity);
+            $('#unitOfMeasurement').val(unitOfMeasurement);
+            
+            // Show the update modal
+            $('#updateModal').modal('show');
+        }
+    
+        // Function to submit the update form
+        function submitUpdate() {
+            // Get form data
+            var formData = $('#updateItemForm').serialize();
+            // Get the item ID from the hidden input field
+            var itemId = $('#itemId').val();
+            // AJAX POST request to update item
+            $.ajax({
+                type: 'POST',
+                url: "/update_inventory_item/" + itemId, // Ensure the correct URL is used
+                data: formData,
+                success: function(response) {
+                    // Handle success response
+                    console.log('Item updated successfully.');
+                    console.log('Updated item:', response); // Log the updated item value
+                    // You can update the UI or perform other actions here
+                    $('#updateModal').modal('hide'); // Hide the modal after successful update
+                    // Reload the table to reflect the changes
+                    refreshTable();
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error('Error updating item:', error);
+                    // You can show an error message to the user or perform other actions here
+                }
+            });
+        }
+    
+        // Function to refresh the table data dynamically
+        function refreshTable() {
+            // Perform an AJAX request to fetch updated table data
+            $.ajax({
+                type: 'GET',
+                url: '/get_updated_table_data', // Replace with the URL to fetch updated table data
+                success: function(data) {
+                    // Update the table body with the new data
+                    $('#tableBody').html(data);
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error('Error refreshing table:', error);
+                    // You can display an error message or handle the error as needed
+                }
+            });
+        }
+    </script>
+</body>
+</html>
