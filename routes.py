@@ -342,11 +342,11 @@ def update_inventory_item(item_id):
             db.session.commit()
 
             # Redirect to the appropriate page after the update operation
-            return redirect(url_for('inventory_routes.view_inventory'))
+            return render_template('view_inventory.html')
         else:
             # Handle the case where the item with the given ID does not exist
             flash('Item not found.', 'error')
-            return redirect(url_for('inventory_routes.view_inventory'))
+            return render_template('view_inventory.html')
     else:
         # If the user is not logged in, redirect to the login page
         return redirect(url_for('routes.login'))
@@ -367,7 +367,7 @@ def delete_inventory_item(item_id):
             flash('Inventory item not found or you do not have permission to delete it', 'error')
 
         # Redirect to the inventory view after deletion
-        return redirect(url_for('inventory_routes.view_inventory'))
+        return render_template('view_inventory.html')
     else:
         # If the user is not logged in, redirect to the login page
         return redirect(url_for('routes.login'))
