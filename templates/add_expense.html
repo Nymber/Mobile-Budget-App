@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>Add Expense</h1>
-
+    <a href="{{ url_for('routes.dashboard') }}" class="btn">Go back to Dashboard</a>
     <form method="POST" action="{{ url_for('routes.add_expense') }}">
         <div class="center-label">
             <label for="name">Expense Name:</label><br>
@@ -33,7 +33,6 @@
         
         <input type="submit" value="Add Expense">
     </form>
-    <a href="{{ url_for('routes.dashboard') }}" class="btn">Go back to Dashboard</a>
     <!-- Add delete buttons for each expense -->
     {% for expense in expenses %}
         <form method="POST" action="{{ url_for('delete_expense', expense_id=expense.id) }}">

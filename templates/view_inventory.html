@@ -18,41 +18,7 @@
     <h1>Inventory Items</h1>
     <a href="{{ url_for('routes.dashboard') }}" class="btn">Go back to Dashboard</a>
     <a href="{{ url_for('inventory_routes.view_inventory') }}" class="btn">Add Item</a>
-    <div class="container">
-        <table id="inventoryTable" class="display">
-            <thead>
-                <tr>
-                    <th>Item ID</th>
-                    <th>Item Name</th>
-                    <th>Quantity</th>
-                    <th>Unit of Measurement</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in inventory_items %}
-                <tr>
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.item_name }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>{{ item.unit_of_measurement }}</td>
-                    <td>
-                        <form id="updateForm-{{ item.id }}" action="{{ url_for('inventory_routes.update_inventory_item', item_id=item.id) }}" method="POST" onsubmit="reloadPage()">
-                            <button type="button" class="btn btn-primary update-btn" onclick="updateItem({{ item.id }})">Update</button>
-                        </form>
-                        <form id="deleteForm-{{ item.id }}" action="{{ url_for('inventory_routes.delete_inventory_item', item_id=item.id) }}" method="POST" >
-                            <button type="button" class="btn btn-danger" onclick="confirmDelete({{ item.id }})">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    
-    <footer>
-        <p>&copy; 2024 YourCompany. All rights reserved.</p>
-    </footer>
+    <button onclick="showAllData()" class="btn">Show All Current Data In New Tab</button> <!-- New button -->
 
     <!-- Modal for updating inventory item -->
     <div id="updateModal" class="modal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
@@ -89,6 +55,42 @@
         </div>
     </div>
 
+    <div class="container">
+        <table id="inventoryTable" class="display">
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>Item Name</th>
+                    <th>Quantity</th>
+                    <th>Unit of Measurement</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in inventory_items %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.item_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.unit_of_measurement }}</td>
+                    <td>
+                        <form id="updateForm-{{ item.id }}" action="{{ url_for('inventory_routes.update_inventory_item', item_id=item.id) }}" method="POST" onsubmit="reloadPage()">
+                            <button type="button" class="btn btn-primary update-btn" onclick="updateItem({{ item.id }})">Select</button>
+                        </form>
+                        <form id="deleteForm-{{ item.id }}" action="{{ url_for('inventory_routes.delete_inventory_item', item_id=item.id) }}" method="POST" >
+                            <button type="button" class="btn btn-danger" onclick="confirmDelete({{ item.id }})">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <footer>
+        <p>&copy; 2024 YourCompany. All rights reserved.</p>
+    </footer>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <script>
@@ -107,26 +109,46 @@
                 document.getElementById('deleteForm-' + itemId).submit();
             }
         }
-    
+        function showAllData() {
+            var allData = ""; // Initialize an empty string to store all data points
+
+            // Loop through each row of the table
+            $('#inventoryTable tbody tr').each(function() {
+                var itemId = $(this).find('td:eq(0)').text(); // Get item ID
+                var itemName = $(this).find('td:eq(1)').text(); // Get item name
+                var quantity = $(this).find('td:eq(2)').text(); // Get quantity
+                var unitOfMeasurement = $(this).find('td:eq(3)').text(); // Get unit of measurement
+
+                // Concatenate data points with line breaks
+                allData += "Item ID: " + itemId + "\n";
+                allData += "Item Name: " + itemName + "\n";
+                allData += "Quantity: " + quantity + "\n";
+                allData += "Unit of Measurement: " + unitOfMeasurement + "\n\n";
+            });
+
+            // Open a new tab and display the formatted data
+            var newWindow = window.open();
+            newWindow.document.write("<pre>" + allData + "</pre>");
+        }
         // Function to handle update item action
         function updateItem(itemId) {
             // Remove 'selected' class from all update buttons
             $('.update-btn').removeClass('selected');
             // Add 'selected' class to the clicked update button
             $('#updateForm-' + itemId + ' .update-btn').addClass('selected');
-        
-            // Update the hidden input field with the item ID
-            $('#itemId').val(itemId);
             
-            // Retrieve values from the updateItemForm
-            var itemName = $('#itemName').val();
-            var quantity = $('#quantity').val();
-            var unitOfMeasurement = $('#unitOfMeasurement').val();
+            // Retrieve values from the selected item and populate the modal fields
+            var itemName = $('#updateForm-' + itemId).closest('tr').find('td:nth-child(2)').text();
+            var quantity = $('#updateForm-' + itemId).closest('tr').find('td:nth-child(3)').text();
+            var unitOfMeasurement = $('#updateForm-' + itemId).closest('tr').find('td:nth-child(4)').text();
             
             // Set the values in the modal input fields
             $('#itemName').val(itemName);
             $('#quantity').val(quantity);
             $('#unitOfMeasurement').val(unitOfMeasurement);
+            
+            // Update the hidden input field with the item ID
+            $('#itemId').val(itemId);
             
             // Show the update modal
             $('#updateModal').modal('show');

@@ -8,9 +8,9 @@
 /* Apply a background color to the entire page */
 body {
     font-family: Arial, sans-serif; /* Use a fallback font */
-    background-color: #121212; /* Dark background color */
+    background-color: #f5f5f5; /* Light background color */
     line-height: 1.6; /* Improve readability by setting line height */
-    color: #ffffff; /* Light text color for better contrast */
+    color: #333333; /* Dark text color for better contrast */
 }
 
 /* Style the header section */
@@ -38,7 +38,7 @@ nav ul li {
 }
 
 nav ul li a {
-    color: #ffffff; /* Light text color */
+    color: #333333; /* Dark text color */
     text-decoration: none;
 }
 
@@ -54,21 +54,26 @@ section {
 
 h2, h1 {
     margin-bottom: 10px;
-    color: #ffffff; /* Light text color */
+    color: #636363; /* Dark text color */
+}
+
+/* Style the title text to be white */
+title {
+    color: #ffffff; /* White color */
 }
 
 form {
-    background-color: #333333; /* Dark background color for forms */
+    background-color: #f0f0f0; /* Light background color for forms */
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); /* Adjusted box shadow */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adjusted box shadow */
     text-align: center; /* Added text-align */
 }
 
 label {
     display: block;
     margin-bottom: 5px;
-    color: #ffffff; /* Light text color */
+    color: #333333; /* Dark text color */
 }
 
 input[type="text"],
@@ -80,15 +85,15 @@ input[type="submit"] {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
-    border: 1px solid #ffffff; /* White border */
+    border: 1px solid #cccccc; /* Light gray border */
     border-radius: 5px;
     box-sizing: border-box;
-    background-color: #333333; /* Dark background color for input fields */
-    color: #ffffff; /* Light text color */
+    background-color: #ffffff; /* White background color for input fields */
+    color: #333333; /* Dark text color */
 }
 
 input:hover {
-    background-color: #555555; /* Darker background color on hover */
+    background-color: #eeeeee; /* Light gray background color on hover */
 }
 
 .btn,
@@ -96,13 +101,12 @@ button {
     width: 100%;
     padding: 10px;
     margin-bottom: 20px;
-    border: 1px solid #ffffff; /* White border */
+    border: 1px solid #333333; /* Dark border */
     border-radius: 5px;
     box-sizing: border-box;
     background-color: #333333; /* Dark background color for buttons */
     color: #ffffff; /* Light text color */
 }
-
 
 .btn:hover,
 button:hover {
@@ -122,27 +126,32 @@ footer {
     max-width: 600px; /* Added maximum width for better readability */
     margin: 50px auto; /* Adjusted margin for centering */
     padding: 20px;
-    background-color: #333333; /* Dark background color */
+    background-color: #f0f0f0; /* Light background color */
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); /* Adjusted box shadow */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adjusted box shadow */
 }
 
 .message {
     text-align: center;
     margin-top: 20px;
-    color: #ffffff; /* Light text color */
+    color: #333333; /* Dark text color */
 }
 
 p {
     text-align: center;
     margin-top: 10px;
     margin-bottom: 20px;
-    color: #ffffff; /* Light text color */
+    color: #333333; /* Dark text color */
 }
 
 a {
     color: #007bff;
     text-decoration: none;
+}
+
+/* Style all links with href attribute to be gray */
+a[href] {
+    color: #888888; /* Gray color */
 }
 
 a:hover {
@@ -164,20 +173,28 @@ a:hover {
     header {
         padding: 10px; /* Adjusted padding for smaller screens */
     }
+    nav ul {
+        flex-direction: column; /* Stack navigation items vertically */
+        justify-content: center; /* Center align the navigation items */
+    }
     nav ul li {
-        display: block;
         margin: 0;
         padding: 10px 0;
     }
-    main {
-        padding: 10px; /* Adjusted padding for smaller screens */
-    }
-    .budget-box {
+    main,
+    section,
+    form {
         padding: 10px; /* Adjusted padding for smaller screens */
     }
     .container {
         width: 90%; /* Adjusted width for smaller screens */
         margin: 20px auto; /* Adjusted margin for centering */
+    }
+    .banner {
+        height: 150px; /* Adjusted height for smaller screens */
+    }
+    footer {
+        padding: 10px; /* Adjusted padding for smaller screens */
     }
 }
 
@@ -204,16 +221,16 @@ label[for^="add_"] {
 
 /* Gray styling for tbody */
 tbody {
-    background-color: #555555; /* Dark gray background color for table body */
-    color: #393838; /* Light text color for better contrast */
+    background-color: #dddddd; /* Light gray background color for table body */
+    color: #333333; /* Dark text color for better contrast */
 }
 
 tbody tr:nth-child(even) {
-    background-color: #333333; /* Darker gray background color for even rows */
+    background-color: #cccccc; /* Lighter gray background color for even rows */
 }
 
 tbody tr:hover {
-    background-color: #777777; /* Lighter gray background color on hover */
+    background-color: #bbbbbb; /* Darker gray background color on hover */
 }
 .selected {
     background-color: green; /* Change the background color to green */

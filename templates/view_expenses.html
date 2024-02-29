@@ -16,7 +16,7 @@
 </head>
 <body>
     <h1>View Expenses</h1>
-
+    <a href="{{ url_for('routes.dashboard') }}" class="btn">Go back to Dashboard</a>
     <div class="container">
         <table id="expensesTable" class="display">
             <thead>
@@ -47,7 +47,6 @@
             </tbody>
         </table>
     </div>
-    <a href="{{ url_for('routes.dashboard') }}" class="btn">Go back to Dashboard</a>
     <footer>
         <p>&copy; 2024 YourCompany. All rights reserved.</p>
     </footer>
