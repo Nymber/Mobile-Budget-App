@@ -47,7 +47,7 @@ def download_excel_earnings():
         return send_file(
             excel_buffer,
             as_attachment=True,
-            download_name='expense_data.xlsx',
+            download_name='earnings_data.xlsx',
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
     else:
