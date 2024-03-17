@@ -18,7 +18,7 @@
     <h1>Inventory Items</h1>
     <a href="{{ url_for('routes.dashboard') }}" class="btn">Go back to Dashboard</a>
     <a href="{{ url_for('inventory_routes.view_inventory') }}" class="btn">Add Item</a>
-    <button onclick="showAllData()" class="btn">Show All Current Data In New Tab</button> <!-- New button -->
+    <a href="{{ url_for('inventory_routes.download_excel_inventory') }}" class="btn">Download Excel Spreadsheet</a>
 
     <!-- Modal for updating inventory item -->
     <div id="updateModal" class="modal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
@@ -108,27 +108,6 @@
             if (confirm('Are you sure you want to delete this inventory item?')) {
                 document.getElementById('deleteForm-' + itemId).submit();
             }
-        }
-        function showAllData() {
-            var allData = ""; // Initialize an empty string to store all data points
-
-            // Loop through each row of the table
-            $('#inventoryTable tbody tr').each(function() {
-                var itemId = $(this).find('td:eq(0)').text(); // Get item ID
-                var itemName = $(this).find('td:eq(1)').text(); // Get item name
-                var quantity = $(this).find('td:eq(2)').text(); // Get quantity
-                var unitOfMeasurement = $(this).find('td:eq(3)').text(); // Get unit of measurement
-
-                // Concatenate data points with line breaks
-                allData += "Item ID: " + itemId + "\n";
-                allData += "Item Name: " + itemName + "\n";
-                allData += "Quantity: " + quantity + "\n";
-                allData += "Unit of Measurement: " + unitOfMeasurement + "\n\n";
-            });
-
-            // Open a new tab and display the formatted data
-            var newWindow = window.open();
-            newWindow.document.write("<pre>" + allData + "</pre>");
         }
         // Function to handle update item action
         function updateItem(itemId) {

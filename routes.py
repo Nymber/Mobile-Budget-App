@@ -1,6 +1,8 @@
 import calculations
 from datetime import datetime, timedelta, timezone
-from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify, flash
+from flask import send_file, Blueprint, render_template, request, redirect, url_for, session, jsonify, flash
+import pandas as pd
+from io import BytesIO
 import db_env
 
 from db_env import db
@@ -11,7 +13,83 @@ routes = Blueprint('routes', __name__)
 def index():
     return render_template('index.html')
 
+@routes.route('/download_excel_earnings', methods=['GET'])
+def download_excel_earnings():
+    # Query all Expense records from the database
+    if 'username' in session:
+        earnings = db_env.DailyEarning.query.filter_by(username=session['username']).all()
+        # Create lists to store data for each column
+        names = [earning.username for earning in earnings]
+        hourly_rates = [earning.hourly_rate for earning in earnings]
+        hours_worked = [earning.hours for earning in earnings]
+        cash_tips = [earning.cash_tips for earning in earnings]
+        salaries = [earning.salary for earning in earnings]
+        timestamps = [earning.timestamp for earning in earnings]
 
+        # Create a DataFrame from the extracted data
+        df = pd.DataFrame({
+            'date': timestamps,
+            'cash_tips/paychecks': cash_tips,
+            'salaries': salaries,
+            'hours_worked': hours_worked,
+            'hourly_rates': hourly_rates,
+        })
+
+        # Export the DataFrame to an Excel file in memory (BytesIO)
+        excel_buffer = BytesIO()
+        df.to_excel(excel_buffer, index=False)
+        excel_buffer.seek(0)  # Reset buffer position to the beginning
+
+        # Specify the attachment filename
+        excel_file_path = 'expense_data.xlsx'
+
+    # Send the Excel file as a downloadable response
+        return send_file(
+            excel_buffer,
+            as_attachment=True,
+            download_name='expense_data.xlsx',
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+    else:
+            return redirect(url_for('routes.login'))
+        
+@routes.route('/download_excel_expenses', methods=['GET'])
+def download_excel():
+    # Query all Expense records from the database
+    if 'username' in session:
+        expenses = db_env.Expense.query.filter_by(username=session['username']).all()
+        earnings = db_env.DailyEarning.query.filter_by(username=session['username']).all()
+        # Create lists to store data for each column
+        names = [expense.name for expense in expenses]
+        prices = [expense.price for expense in expenses]  # Assuming 'price' represents age here for demonstration purposes
+        times = [expense.timestamp for expense in expenses]
+        repeating_monthly = [expense.repeating for expense in expenses]
+        # Create a DataFrame from the extracted data
+        df = pd.DataFrame({
+            'Name': names,
+            'prices': prices,
+            'timestamp': times,
+            'Repeating Monthly': repeating_monthly
+        })
+
+        # Export the DataFrame to an Excel file in memory (BytesIO)
+        excel_buffer = BytesIO()
+        df.to_excel(excel_buffer, index=False)
+        excel_buffer.seek(0)  # Reset buffer position to the beginning
+
+        # Specify the attachment filename
+        excel_file_path = 'expense_data.xlsx'
+
+    # Send the Excel file as a downloadable response
+        return send_file(
+            excel_buffer,
+            as_attachment=True,
+            download_name='expense_data.xlsx',
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+    else:
+            return redirect(url_for('routes.login'))
+    
 @routes.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -110,7 +188,7 @@ def dashboard():
                 db_env.Expense.timestamp >= start_of_day
             ).all()
 
-            daily_expenses_total = sum(expense.price for expense in daily_expenses)
+            daily_expenses_total = calculations.calculate_average_daily_expenses(username, current_date)
             monthly_expenses = calculations.calculate_monthly_expenses(username)
 
             # Calculate daily savings needed (monthly savings goal divided by 30)
@@ -294,15 +372,17 @@ inventory_routes = Blueprint('inventory_routes', __name__)
 
 # Route to view inventory items
 @inventory_routes.route('/view_inventory', methods=['GET'])
+
 def view_inventory():
     if 'username' in session:
         inventory_items = db_env.InventoryItem.query.filter_by(username=session['username']).all()
-        return render_template('inventory.html', inventory_items=inventory_items)
-    return redirect(url_for('routes.login'))
+        return render_template('inventory.html', inventory_items=inventory_items, username=session['username'])
+    return redirect(url_for('routes.login',username=session['username']))
 
 # Helper function to retrieve inventory items
 @inventory_routes.route('/get_inventory_items', methods=['GET'])
 def get_inventory_items():
+    username = session['username']
     if 'username' in session:
         # Retrieve inventory items from the database
         inventory_items = db_env.InventoryItem.query.filter_by(username=session['username']).all()
@@ -317,7 +397,7 @@ def get_inventory_items():
                 'unit_of_measurement': item.unit_of_measurement
             }
             inventory_list.append(item_dict)
-        return render_template('view_inventory.html', inventory_items=inventory_items)
+        return render_template('view_inventory.html', inventory_items=inventory_items, username=username)
     return redirect(url_for('routes.login'))
 
 @inventory_routes.route('/update_inventory_item/<string:item_id>', methods=['POST'])
@@ -379,4 +459,42 @@ def get_updated_table_data():
         return render_template('view_inventory.html', inventory_items=db_env.InventoryItem.query.filter_by(username=session['username']).all())
     else:
         # If the user is not logged in, redirect to the login page
+        return redirect(url_for('routes.login'))
+    
+@inventory_routes.route('/download_excel_inventory', methods=['GET'])
+def download_excel_inventory():
+    if 'username' in session:
+        # Query all InventoryItem records from the database
+        inventory_items = db_env.InventoryItem.query.filter_by(username=session['username']).all()
+
+        # Create lists to store data for each column
+        item_names = [item.item_name for item in inventory_items]
+        quantities = [item.quantity for item in inventory_items]
+        units = [item.unit_of_measurement for item in inventory_items]
+        timestamps = [item.timestamp for item in inventory_items]
+
+        # Create a DataFrame from the extracted data
+        df = pd.DataFrame({
+            'Item Name': item_names,
+            'Quantity': quantities,
+            'Unit of Measurement': units,
+            'Timestamp': timestamps
+        })
+
+        # Export the DataFrame to an Excel file in memory (BytesIO)
+        excel_buffer = BytesIO()
+        df.to_excel(excel_buffer, index=False)
+        excel_buffer.seek(0)  # Reset buffer position to the beginning
+
+        # Specify the attachment filename
+        excel_file_path = 'inventory_data.xlsx'
+
+        # Send the Excel file as a downloadable response
+        return send_file(
+            excel_buffer,
+            as_attachment=True,
+            download_name='inventory_data.xlsx',
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+    else:
         return redirect(url_for('routes.login'))

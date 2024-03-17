@@ -2,6 +2,7 @@ import db_env
 from db_env import db
 import env
 from sqlalchemy import func
+from typing import Union
 from datetime import datetime, timedelta
 
 def calculate_non_repeatable_expenses_last_24_hours(username, current_date):
@@ -83,7 +84,9 @@ def calculate_weekly_earnings(username, start_of_week, end_of_week):
         db_env.DailyEarning.timestamp >= start_of_week,
         db_env.DailyEarning.timestamp < end_of_week
     ).all()
-    total_earnings = sum(earning.salary + earning.cash_tips for earning in earnings)
+    total_earnings = sum(earning.cash_tips for earning in earnings)
+    total_earnings = sum(earning.hourly_rate * earning.hours for earning in earnings) + total_earnings
+    total_earnings = sum(earning.salary/55 for earning in earnings) + total_earnings
     return total_earnings
 
 
@@ -101,7 +104,9 @@ def calculate_daily_earnings(username, date):
     ).all()
 
     # Calculate total earnings for the week plus one day
-    total_earnings = sum(earning.salary + earning.cash_tips for earning in earnings)
+    total_earnings = sum(earning.cash_tips for earning in earnings) / 7
+    total_earnings = sum(earning.hourly_rate * earning.hours for earning in earnings) / 7 + total_earnings
+    total_earnings = sum(earning.salary/365 for earning in earnings) + total_earnings
 
     # Calculate the number of days in the week plus one
     days_in_week_plus_one = (end_of_week - start_of_week).days + 1
@@ -112,7 +117,7 @@ def calculate_daily_earnings(username, date):
     else:
         daily_earnings_ratio = 0
 
-    return daily_earnings_ratio
+    return total_earnings
 
 
 def calculate_monthly_earnings(username, start_of_month):
@@ -123,7 +128,9 @@ def calculate_monthly_earnings(username, start_of_month):
         db_env.DailyEarning.timestamp >= start_of_month,
         db_env.DailyEarning.timestamp < end_of_month
     ).all()
-    total_earnings = sum(earning.salary + earning.cash_tips for earning in earnings)
+    total_earnings = sum(earning.cash_tips for earning in earnings)
+    total_earnings = sum(earning.hourly_rate * earning.hours for earning in earnings) + total_earnings
+    total_earnings = sum(earning.salary/12 for earning in earnings) + total_earnings
     return total_earnings
 
 
@@ -132,43 +139,25 @@ def calculate_total_income(username, start_date, end_date):
     earnings = db_env.DailyEarning.query.filter(
         db_env.DailyEarning.username == username,
         db_env.DailyEarning.timestamp >= start_date,
-        db_env.DailyEarning.timestamp < end_date
+        db_env.DailyEarning.timestamp < timedelta(days=365)   
     ).all()
-    total_income = sum(earning.salary + earning.cash_tips for earning in earnings)
+    total_earnings = sum(earning.hourly_rate * earning.hours for earning in earnings)
+    total_income = sum(earning.salary + earning.cash_tips for earning in earnings) + total_earnings
     return total_income
 
-def calculate_average_daily_expenses(username, today_date):
+def calculate_average_daily_expenses(username: str, today_date: Union[datetime, str]) -> float:
     """Calculate the average daily expenses for a given user over a specified period."""
+    if isinstance(today_date, str):
+        today_date = datetime.strptime(today_date, '%Y-%m-%d')
+
     # Calculate the start date of 30 days ago
     thirty_days_ago = today_date - timedelta(days=30)
 
-    # Retrieve total monthly expenses for the last 30 days
+    # Assuming these functions are defined elsewhere
     total_monthly_expenses_last_30_days = calculate_monthly_expenses(username) + calculate_non_repeating_monthly_expenses(username, today_date)
-
-    # Retrieve total expenses for today
-    expenses_today = db_env.Expense.query.filter(
-        db_env.Expense.username == username,
-        db_env.Expense.timestamp >= today_date,
-        db_env.Expense.timestamp < today_date + timedelta(days=1)
-    ).all()
-
-    # Calculate total expenses for today
-    total_expenses_today = sum(expense.price for expense in expenses_today)
-
-    # Calculate the number of days in the last 30 days
-    days_in_last_30_days = (today_date - thirty_days_ago).days
-
-    # Calculate the average daily expenses over the last 30 days
-    if days_in_last_30_days > 0:
-        average_daily_expenses_last_30_days = total_monthly_expenses_last_30_days / days_in_last_30_days
-    else:
-        average_daily_expenses_last_30_days = 0
-
-    # Calculate the total average daily expenses over the specified period
-    total_average_daily_expenses = (total_expenses_today + (average_daily_expenses_last_30_days * 30)) / 31
+    total_average_daily_expenses = total_monthly_expenses_last_30_days / 30  # Divide by 30 days
 
     return total_average_daily_expenses
-
 
 def generate_forecast_data(username):
     """Generate forecasts for savings, expenses, and earnings for the next 6 months using SARIMA."""

@@ -50,15 +50,16 @@
         <div id="hourly_fields" class="section">
             <label for="hourly_rate">Hourly Rate:</label><br>
             <input type="number" id="hourly_rate" name="hourly_rate" step="0.01" min="0" value="{{ last_hourly_rate }}" required><br>
+
             <label for="hours">Hours Worked:</label><br>
             <input type="number" id="hours" name="hours" step="0.01" min="0" value="0" required><br>
         
-            <label for="cash_tips">Cash Tips:</label><br>
+            <label for="cash_tips"> Or Total Paycheck / Tips:</label><br>
             <input type="number" id="cash_tips" name="cash_tips" step="0.01" min="0" value="0" required><br>
         </div>
         
         <div id="salary_fields" class="section" style="display: none;">
-            <label for="salary_input">Salary:</label><br>
+            <label for="salary_input">Salary After Taxes:</label><br>
             <input type="number" id="salary_input" name="salary_input" step="0.01" min="0" value="0" required><br>
         </div>
     
