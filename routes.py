@@ -11,6 +11,8 @@ from calculations import calculated
 import db_env
 from db_env import db
 
+
+
 routes = Blueprint('routes', __name__)
 
 # Routes and views
@@ -20,9 +22,11 @@ def index():
 
 @routes.route('/download_excel_earnings', methods=['GET'])
 def download_excel_earnings():
+
     # Query all Expense records from the database
     if 'username' in session:
         earnings = db_env.DailyEarning.query.filter_by(username=session['username']).all()
+
         # Create lists to store data for each column
         names = [earning.username for earning in earnings]
         hourly_rates = [earning.hourly_rate for earning in earnings]
@@ -60,15 +64,18 @@ def download_excel_earnings():
         
 @routes.route('/download_excel_expenses', methods=['GET'])
 def download_excel():
+
     # Query all Expense records from the database
     if 'username' in session:
         expenses = db_env.Expense.query.filter_by(username=session['username']).all()
         earnings = db_env.DailyEarning.query.filter_by(username=session['username']).all()
+
         # Create lists to store data for each column
         names = [expense.name for expense in expenses]
         prices = [expense.price for expense in expenses]  # Assuming 'price' represents age here for demonstration purposes
         times = [expense.timestamp for expense in expenses]
         repeating_monthly = [expense.repeating for expense in expenses]
+
         # Create a DataFrame from the extracted data
         df = pd.DataFrame({
             'Name': names,
@@ -130,18 +137,22 @@ def register():
 @routes.route('/inventory', methods=['GET', 'POST'])
 def inventory():
     if 'username' in session:
+
         # Initialize variables
         username = session['username']
         current_date = datetime.utcnow()
+
         # Retrieve account information
         account = db_env.Account.query.filter_by(username=username).first()
 
         if account:
             if request.method == 'POST':
+
                 # Handle form submission for adding items to inventory
                 item_name = request.form['item_name']
                 quantity = float(request.form['quantity'])
                 unit_of_measurement = request.form['unit_of_measurement']
+
                 # Create a new InventoryItem object and add it to the database
                 new_item = db_env.InventoryItem(item_name=item_name, quantity=quantity,
                                                 unit_of_measurement=unit_of_measurement, username=username)
@@ -164,6 +175,7 @@ def inventory():
 def fetch_inventory_items():
     if 'username' in session:
         username = session['username']
+
         # Retrieve inventory items for the current user
         inventory_items = db_env.InventoryItem.query.filter_by(username=username).all()
 
@@ -180,6 +192,7 @@ def fetch_inventory_items():
 @routes.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     if 'username' in session:
+
         # Initialize variables
         username = session['username']
 
@@ -188,6 +201,7 @@ def dashboard():
         calc = calculated(username, account)
         if account:
             if request.method == 'POST':
+
                 # Handle form submission for setting monthly savings goal
                 monthly_savings_goal = float(request.form['monthly_savings_goal'])
                 account.monthly_savings_goal = monthly_savings_goal
@@ -232,6 +246,7 @@ def dashboard():
                     except Exception as e:
                         db.session.rollback()
                         print(f"An error occurred while updating: {e}")
+
             # Render the dashboard template with the forecast data
             return render_template('dashboard.html',
                                    username=username,
@@ -433,6 +448,7 @@ def update_inventory_item(item_id):
 @inventory_routes.route('/delete_inventory_item/<int:item_id>', methods=['POST'])
 def delete_inventory_item(item_id):
     if 'username' in session:
+
         # Query the database to find the inventory item by its ID
         inventory_item = db_env.InventoryItem.query.get(item_id)
 
@@ -463,6 +479,7 @@ def get_updated_table_data():
 @inventory_routes.route('/download_excel_inventory', methods=['GET'])
 def download_excel_inventory():
     if 'username' in session:
+
         # Query all InventoryItem records from the database
         inventory_items = db_env.InventoryItem.query.filter_by(username=session['username']).all()
 
@@ -505,6 +522,7 @@ charts = Blueprint('charts', __name__)
 
 @charts.route('/api/financial_overview', methods=['GET'])
 def get_financial_overview():
+
     # Query the FinancialOverview data from the last 30 days
     thirty_days_ago = datetime.now() - timedelta(days=30)
     records = db_env.FinancialOverview.query.filter(db_env.FinancialOverview.timestamp >= thirty_days_ago).all()

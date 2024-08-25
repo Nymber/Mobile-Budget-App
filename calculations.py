@@ -28,10 +28,12 @@ def calculate_non_repeatable_expenses_last_24_hours(username, current_date):
 
 
 def calculate_daily_limit(username, current_date):
+
     # Retrieve account information
     account = db_env.Account.query.filter_by(username=username).first()
 
     if account:
+
         # Calculate total monthly expenses for non-repeating expenses
         monthly_expenses_non_repeating = calculate_monthly_expenses(username)
         daily_savings_needed = account.monthly_savings_goal / 30
@@ -70,6 +72,7 @@ def calculate_monthly_expenses(username):
         return 0
 
 def calculate_non_repeating_monthly_expenses(username, today):
+
     """Calculate total non-repeating expenses in the last 30 days for a given user."""
     start_of_month = today - timedelta(days=30)
     total_expenses = db_env.Expense.query.filter(
@@ -80,6 +83,7 @@ def calculate_non_repeating_monthly_expenses(username, today):
     return total_expenses
 
 def calculate_weekly_earnings(username, start_of_week, end_of_week):
+
     """Calculate total weekly earnings for a given user."""
     earnings = db_env.DailyEarning.query.filter(
         db_env.DailyEarning.username == username,
@@ -93,6 +97,7 @@ def calculate_weekly_earnings(username, start_of_week, end_of_week):
 
 
 def calculate_daily_earnings(username, date):
+
     """Calculate the daily earnings ratio based on the week plus one day of earnings."""
     # Determine the start and end dates of the week
     start_of_week = date - timedelta(days=date.weekday())
@@ -123,6 +128,7 @@ def calculate_daily_earnings(username, date):
 
 
 def calculate_monthly_earnings(username, start_of_month):
+
     """Calculate total monthly earnings for a given user."""
     end_of_month = start_of_month + timedelta(days=30)
     earnings = db_env.DailyEarning.query.filter(
@@ -137,6 +143,7 @@ def calculate_monthly_earnings(username, start_of_month):
 
 
 def calculate_total_income(username, start_date, end_date):
+
     """Calculate the total income for a given user within a specified period."""
     earnings = db_env.DailyEarning.query.filter(
         db_env.DailyEarning.username == username,
@@ -148,6 +155,7 @@ def calculate_total_income(username, start_date, end_date):
     return total_income
 
 def calculate_average_daily_expenses(username: str, today_date: Union[datetime, str]) -> float:
+
     """Calculate the average daily expenses for a given user over a specified period."""
     if isinstance(today_date, str):
         today_date = datetime.strptime(today_date, '%Y-%m-%d')
@@ -162,6 +170,7 @@ def calculate_average_daily_expenses(username: str, today_date: Union[datetime, 
     return total_average_daily_expenses
 
 def generate_forecast_data(username):
+
     """Generate forecasts for savings, expenses, and earnings for the next 6 months using SARIMA."""
     # Generate forecasts for expenses, earnings, and savings
     expense_forecast = generate_expense_forecast(username)
@@ -174,6 +183,7 @@ def generate_forecast_data(username):
     return forecast_data
 
 def get_historical_expenses(username):
+
     """Retrieve the historical expenses for a given user."""
     # Replace with actual implementation to retrieve historical expenses
     expenses = db_env.Expense.query.filter(db_env.Expense.username == username).all()
@@ -181,6 +191,7 @@ def get_historical_expenses(username):
     return historical_expenses
 
 def generate_expense_forecast(username):
+
     """Generate a forecast for future expenses for a given user using a simple moving average."""
     # Replace placeholder code with actual implementation
     historical_expenses = get_historical_expenses(username)
@@ -188,6 +199,7 @@ def generate_expense_forecast(username):
     return forecast
 
 def get_total_historical_earnings(username):
+
     """Retrieve the total historical earnings for a given user."""
     # Retrieve all historical earnings for the user
     earnings = db_env.DailyEarning.query.filter(db_env.DailyEarning.username == username).all()
@@ -206,6 +218,7 @@ def get_total_historical_earnings(username):
     return total_earnings
 
 def generate_earnings_forecast(username):
+
     """Generate a forecast for future earnings for a given user using a simple moving average."""
     # Actual implementation: Use a simple moving average to forecast earnings for the next 6 months
     historical_earnings = get_total_historical_earnings(username)
@@ -213,6 +226,7 @@ def generate_earnings_forecast(username):
     return forecast
 
 def generate_savings_forecast(username):
+
     """Generate a forecast for future savings for a given user using SARIMA."""
     # Placeholder implementation: Calculate savings based on difference between earnings and expenses
     expense_forecast = generate_expense_forecast(username)
@@ -225,6 +239,7 @@ def generate_savings_forecast(username):
 
 
 def calculate_total_non_repeating_expenses_within_24_hours(username, today_date):
+
     """Calculate the total non-repeating expenses within the last 24 hours."""
     # Calculate the start and end timestamps for the last 24 hours
     start_of_day = today_date - timedelta(days=1)
@@ -243,6 +258,7 @@ def calculate_total_non_repeating_expenses_within_24_hours(username, today_date)
     return total_non_repeating_expenses_within_24_hours
 
 def calculate_total_money_spent_today(username):
+
     # Calculate the start and end timestamps for today
     start_of_day = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
     end_of_day = start_of_day + timedelta(days=1)
