@@ -1,8 +1,9 @@
 from sqlalchemy import func
 from flask_sqlalchemy import SQLAlchemy
-from app_settings import app
 from datetime import datetime, timedelta, timezone
 
+# Local imports
+from app_settings import app
 db = SQLAlchemy(app)
 
 # Database models
@@ -55,3 +56,25 @@ class InventoryItem(db.Model):
         self.quantity = quantity
         self.unit_of_measurement = unit_of_measurement
         self.username = username
+
+class FinancialOverview(db.Model):
+    username = db.Column(db.String(100), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    monthly_savings_goal = db.Column(db.Float)
+    daily_limit = db.Column(db.Float)
+    total_income = db.Column(db.Float)
+    daily_earnings = db.Column(db.Float)
+    weekly_earnings = db.Column(db.Float)
+    monthly_expenses_non_repeating = db.Column(db.Float)
+    monthly_expenses = db.Column(db.Float)
+    total_money_spent_today = db.Column(db.Float)
+    daily_expenses_total = db.Column(db.Float)
+    monthly_earnings = db.Column(db.Float)
+    savings_rate = db.Column(db.Float)
+    average_daily_expenses = db.Column(db.Float)
+    total_expenses = db.Column(db.Float)
+    start_of_month = db.Column(db.DateTime)
+    end_of_month = db.Column(db.DateTime)
+    start_of_week = db.Column(db.DateTime)
+    end_of_week = db.Column(db.DateTime)
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)

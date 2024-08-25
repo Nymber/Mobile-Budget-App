@@ -1,9 +1,11 @@
-import db_env
-from db_env import db
-import env
 from sqlalchemy import func
 from typing import Union
 from datetime import datetime, timedelta
+
+# Local imports
+import db_env
+from db_env import db
+import env
 
 def calculate_non_repeatable_expenses_last_24_hours(username, current_date):
     try:
@@ -255,3 +257,67 @@ def calculate_total_money_spent_today(username):
     # Calculate the total money spent today
     total_money_spent_today = sum(expense.price for expense in expenses_today)
     return total_money_spent_today
+
+class Calculated:
+    def __init__(self, username, account):
+        self.current_date = datetime.utcnow()
+        self.start_of_day = self.current_date - timedelta(days=1)
+
+        # Calculate daily expenses
+        self.daily_expenses = db_env.Expense.query.filter(
+            db_env.Expense.username == username,
+            db_env.Expense.timestamp >= self.start_of_day
+        ).all()
+
+        # Calculate days expenses
+        self.daily_expenses_total = calculate_average_daily_expenses(username, self.current_date)
+
+        # Calculate monthly expenses
+        self.monthly_expenses = calculate_monthly_expenses(username)
+
+        # Calculate daily savings needed (monthly savings goal divided by 30)
+        self.daily_savings_needed = account.monthly_savings_goal / 30
+
+        # Total daily expenses including the savings needed portion
+        self.daily_expenses_total += self.daily_savings_needed
+
+        # Calculate total money spent today
+        self.total_money_spent_today = calculate_total_non_repeating_expenses_within_24_hours(username, self.current_date)
+
+        # Calculate total monthly expenses for non-repeating expenses
+        self.start_of_month = self.current_date - timedelta(days=30)
+        self.end_of_month = self.start_of_month + timedelta(days=30)
+        self.monthly_expenses_non_repeating = calculate_non_repeating_monthly_expenses(username, self.current_date)
+
+        # Calculate daily spending limit
+        self.daily_limit = calculate_daily_limit(username, self.current_date)
+        self.daily_limit = self.daily_limit - self.total_money_spent_today
+
+        # Calculate weekly earnings
+        self.start_of_week = self.current_date - timedelta(days=self.current_date.weekday())
+        self.end_of_week = self.start_of_week + timedelta(days=7)
+        self.weekly_earnings = calculate_weekly_earnings(username, self.start_of_week, self.end_of_week)
+
+        # Calculate daily earnings
+        self.daily_earnings = calculate_daily_earnings(username, self.current_date)
+
+        # Calculate monthly earnings
+        self.monthly_earnings = calculate_monthly_earnings(username, self.start_of_month)
+
+        # Calculate Savings Rate
+        self.total_income = self.monthly_earnings
+        self.total_expenses = self.monthly_expenses_non_repeating + self.monthly_expenses
+        self.savings = self.total_income - self.total_expenses
+        self.savings_rate = (self.savings / self.total_income) * 100 if self.total_income > 0 else 0
+
+        # Calculate Average Daily Expenses
+        self.average_daily_expenses = calculate_average_daily_expenses(username, self.current_date)
+
+        # Generate forecast data
+        self.expense_forecast = generate_expense_forecast(username)
+        self.earnings_forecast = generate_earnings_forecast(username)
+        self.savings_forecast = generate_savings_forecast(username)
+
+def calculated(username, account):
+    result = Calculated(username, account)
+    return result

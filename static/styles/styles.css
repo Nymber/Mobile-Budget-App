@@ -21,6 +21,32 @@ header {
     text-align: center;
 }
 
+/* Flexbox styles for aligning text and chart containers */
+.chart-item {
+    display: flex !important; /* Force Flex display */
+    align-items: center; /* Vertically centers items */
+    justify-content: flex-start; /* Aligns items to the start */
+    margin-bottom: 20px; /* Adds space between items */
+}
+
+    .chart-item p {
+        margin: 0; /* Removes default margin */
+        flex: 0 0 200px; /* Fixed width for text to align next to charts */
+        margin-right: 20px; /* Adds space between text and chart */
+        text-align: right; /* Align text to the right */
+    }
+
+.chart-container {
+    flex: 1; /* Chart container takes the remaining space */
+    max-width: 400px; /* Maximum width of the chart container */
+}
+
+/* Ensure all canvas elements are styled */
+canvas {
+    width: 100% !important;
+    height: auto !important;
+}
+
 /* Style the main content section */
 main {
     padding: 20px;
@@ -33,18 +59,18 @@ nav ul {
     justify-content: center; /* Center align the navigation items */
 }
 
-nav ul li {
-    margin-right: 20px;
-}
+    nav ul li {
+        margin-right: 20px;
+    }
 
-nav ul li a {
-    color: #333333; /* Dark text color */
-    text-decoration: none;
-}
+        nav ul li a {
+            color: #333333; /* Dark text color */
+            text-decoration: none;
+        }
 
-nav ul li a:hover {
-    text-decoration: underline;
-}
+            nav ul li a:hover {
+                text-decoration: underline;
+            }
 
 /* Style the form sections */
 section {
@@ -63,7 +89,9 @@ title {
 }
 
 form {
+    max-width: 800px;
     background-color: #f0f0f0; /* Light background color for forms */
+    margin: 0 auto;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adjusted box shadow */
@@ -108,10 +136,10 @@ button {
     color: #ffffff; /* Light text color */
 }
 
-.btn:hover,
-button:hover {
-    background-color: #555555; /* Darker background color on hover */
-}
+    .btn:hover,
+    button:hover {
+        background-color: #555555; /* Darker background color on hover */
+    }
 
 /* Style the footer section */
 footer {
@@ -149,14 +177,14 @@ a {
     text-decoration: none;
 }
 
-/* Style all links with href attribute to be gray */
-a[href] {
-    color: #888888; /* Gray color */
-}
+    /* Style all links with href attribute to be gray */
+    a[href] {
+        color: #888888; /* Gray color */
+    }
 
-a:hover {
-    text-decoration: underline;
-}
+    a:hover {
+        text-decoration: underline;
+    }
 
 .banner {
     background-image: url("1.png");
@@ -173,29 +201,45 @@ a:hover {
     header {
         padding: 10px; /* Adjusted padding for smaller screens */
     }
+
     nav ul {
         flex-direction: column; /* Stack navigation items vertically */
         justify-content: center; /* Center align the navigation items */
     }
-    nav ul li {
-        margin: 0;
-        padding: 10px 0;
-    }
+
+        nav ul li {
+            margin: 0;
+            padding: 10px 0;
+        }
+
     main,
     section,
     form {
         padding: 10px; /* Adjusted padding for smaller screens */
     }
+
     .container {
         width: 90%; /* Adjusted width for smaller screens */
         margin: 20px auto; /* Adjusted margin for centering */
     }
+
     .banner {
         height: 150px; /* Adjusted height for smaller screens */
     }
+
     footer {
         padding: 10px; /* Adjusted padding for smaller screens */
     }
+
+    .chart-item {
+        flex-direction: column; /* Stack items vertically on small screens */
+        align-items: flex-start; /* Align items to the left */
+    }
+
+        .chart-item p {
+            margin-bottom: 10px; /* Adds space between text and chart on small screens */
+            text-align: left; /* Align text to the left */
+        }
 }
 
 /* Style the center-buttons class */
@@ -225,14 +269,115 @@ tbody {
     color: #333333; /* Dark text color for better contrast */
 }
 
-tbody tr:nth-child(even) {
-    background-color: #cccccc; /* Lighter gray background color for even rows */
-}
+    tbody tr:nth-child(even) {
+        background-color: #cccccc; /* Lighter gray background color for even rows */
+    }
 
-tbody tr:hover {
-    background-color: #bbbbbb; /* Darker gray background color on hover */
-}
+    tbody tr:hover {
+        background-color: #bbbbbb; /* Darker gray background color on hover */
+    }
+
 .selected {
     background-color: green; /* Change the background color to green */
     color: white; /* Change the text color to white */
 }
+
+/* Improved color scheme */
+body {
+    background-color: #f8f8f8; /* Light gray background color */
+    color: #444444; /* Dark gray text color */
+}
+
+header {
+    background-color: #222222; /* Dark gray background color for the header */
+    color: #ffffff; /* White text color */
+}
+
+nav ul li a {
+    color: #444444; /* Dark gray text color */
+}
+
+    nav ul li a:hover {
+        text-decoration: none;
+        color: #007bff; /* Blue text color on hover */
+    }
+
+form {
+    background-color: #ffffff; /* White background color for forms */
+    border: 1px solid #dddddd; /* Light gray border */
+}
+
+label {
+    color: #444444; /* Dark gray text color */
+}
+
+input[type="text"],
+input[type="number"],
+input[type="checkbox"],
+input[type="password"],
+input[type="email"],
+input[type="submit"] {
+    border: 1px solid #dddddd; /* Light gray border */
+    background-color: #f8f8f8; /* Light gray background color for input fields */
+    color: #444444; /* Dark gray text color */
+}
+
+input:hover {
+    background-color: #eeeeee; /* Light gray background color on hover */
+}
+
+.btn,
+button {
+    border: 1px solid #444444; /* Dark gray border */
+    background-color: #444444; /* Dark gray background color for buttons */
+    color: #ffffff; /* White text color */
+}
+
+    .btn:hover,
+    button:hover {
+        background-color: #555555; /* Darker gray background color on hover */
+    }
+
+footer {
+    background-color: #222222; /* Dark gray background color for the footer */
+    color: #ffffff; /* White text color */
+}
+
+.container {
+    background-color: #ffffff; /* White background color */
+    border: 1px solid #dddddd; /* Light gray border */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adjusted box shadow */
+}
+
+.message {
+    color: #444444; /* Dark gray text color */
+}
+
+p {
+    color: #444444; /* Dark gray text color */
+}
+
+a[href] {
+    color: #888888; /* Gray color */
+}
+
+a:hover {
+    text-decoration: none;
+    color: #007bff; /* Blue text color on hover */
+}
+
+.banner {
+    background-color: #f8f8f8; /* Light gray background color */
+}
+
+tbody {
+    background-color: #eeeeee; /* Light gray background color for table body */
+}
+
+    tbody tr:nth-child(even) {
+        background-color: #dddddd; /* Lighter gray background color for even rows */
+    }
+
+    tbody tr:hover {
+        background-color: #cccccc; /* Darker gray background color on hover */
+    }
