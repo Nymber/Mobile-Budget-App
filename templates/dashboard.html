@@ -6,98 +6,97 @@
     <title>Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="{{ url_for('static', filename='charts.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}">
 </head>
 <body>
-    <header>
-        <h1>Welcome, {{ username }}!</h1>
-        <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="{{ url_for('inventory_routes.get_inventory_items') }}">View Inventory</a></li>
-                <li><a href="/logout">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <section>
-            <div class="budget-box">
-                <h2 class="center">Budget Information</h2>
-                <form method="post" action="/dashboard">
-                    <label for="monthly_savings_goal">Set Monthly Savings Goal:</label>
-                    <input type="number" id="monthly_savings_goal" name="monthly_savings_goal" step="0.01" value="{{ monthly_savings_goal }}">
-                    <button type="submit" class="btn">Set Goal</button>
-                </form>
-                <section>
-                    <div class="center-buttons">
-                        <a href="/view_expenses" class="btn">View Expenses</a>
-                        <a href="/view_earnings" class="btn">View Earnings</a>
-                        <a href="/add_expense" class="btn">Add Expense</a>
-                        <a href="/add_earnings" class="btn">Add Daily Earnings</a>
-                    </div>
-                </section>
-                <form>
-                    <div class="chart-item">
-                        <p><strong>Total Money Spent In 24 Hours:</strong> ${{ total_money_spent_today | round(2) }}</p>
-                        <div class="chart-container">
-                            <canvas id="totalMoneySpentChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="chart-item">
-                        <p><strong>Daily Earnings:</strong> ${{ daily_earnings | round(2) }}</p>
-                        <div class="chart-container">
-                            <canvas id="dailyEarningsChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="chart-item">
-                        <p><strong>Weekly Earnings:</strong> ${{ weekly_earnings | round(2) }}</p>
-                        <div class="chart-container">
-                            <canvas id="weeklyEarningsChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="chart-item">
-                        <p><strong>Monthly Earnings:</strong> ${{ monthly_earnings | round(2) }}</p>
-                        <div class="chart-container">
-                            <canvas id="monthlyEarningsChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="chart-item">
-                        <p><strong>Monthly Expenses (Non-Repeating):</strong> ${{ monthly_expenses_non_repeating | round(2) }}</p>
-                        <div class="chart-container">
-                            <canvas id="monthlyExpensesNonRepeatingChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="chart-item">
-                        <p><strong>Monthly Expenses (Repeating):</strong> ${{ monthly_expenses | round(2) }}</p>
-                        <div class="chart-container">
-                            <canvas id="monthlyExpensesRepeatingChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="chart-item">
-                        <p><strong>Monthly Expenses (Total):</strong> ${{ total_expenses | round(2) }}</p>
-                        <div class="chart-container">
-                            <canvas id="monthlyExpensesTotalChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="chart-item">
-                        <p><strong>Daily Expenses:</strong> ${{ daily_expenses_total | round(2) }}</p>
-                        <div class="chart-container">
-                            <canvas id="dailyExpensesChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="chart-item">
-                        <p><strong>Savings Rate:</strong> {{ savings_rate | round(2) }}%</p>
-                        <div class="chart-container">
-                            <canvas id="savingsRateChart"></canvas>
-                        </div>
-                    </div>
-                    <script src="{{ url_for('static', filename='charts.js') }}"></script>
-                </form>
+<header>
+    <h1>Welcome, {{ username }}!</h1>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="{{ url_for('inventory_routes.get_inventory_items') }}">View Inventory</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+</header>
+<main>
+    <section>
+        <div class="budget-box">
+            <h2 class="center">Budget Information</h2>
+            <form method="post" action="/dashboard">
+                <label for="monthly_savings_goal">Set Monthly Savings Goal:</label>
+                <input type="number" id="monthly_savings_goal" name="monthly_savings_goal" step="0.01" value="{{ monthly_savings_goal }}">
+                <button type="submit" class="btn">Set Goal</button>
+            </form>
+            <section>
+                <div class="center-buttons">
+                    <a href="/view_expenses" class="btn">View Expenses</a>
+                    <a href="/view_earnings" class="btn">View Earnings</a>
+                    <a href="/add_expense" class="btn">Add Expense</a>
+                    <a href="/add_earnings" class="btn">Add Daily Earnings</a>
+                </div>
+            </section>
+            <!-- Add canvas elements for each chart -->
+            <div class="chart-item">
+                <p><strong>Total Money Spent In 24 Hours:</strong> ${{ total_money_spent_today | round(2) }}</p>
+                <div class="chart-container">
+                    <canvas id="totalMoneySpentChart"></canvas>
+                </div>
             </div>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2024 Shimi. All rights reserved.</p>
-    </footer>
+            <div class="chart-item">
+                <p><strong>Daily Earnings:</strong> ${{ daily_earnings | round(2) }}</p>
+                <div class="chart-container">
+                    <canvas id="dailyEarningsChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-item">
+                <p><strong>Weekly Earnings:</strong> ${{ weekly_earnings | round(2) }}</p>
+                <div class="chart-container">
+                    <canvas id="weeklyEarningsChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-item">
+                <p><strong>Monthly Earnings:</strong> ${{ monthly_earnings | round(2) }}</p>
+                <div class="chart-container">
+                    <canvas id="monthlyEarningsChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-item">
+                <p><strong>Monthly Expenses (Non-Repeating):</strong> ${{ monthly_expenses_non_repeating | round(2) }}</p>
+                <div class="chart-container">
+                    <canvas id="monthlyExpensesNonRepeatingChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-item">
+                <p><strong>Monthly Expenses (Repeating):</strong> ${{ monthly_expenses | round(2) }}</p>
+                <div class="chart-container">
+                    <canvas id="monthlyExpensesRepeatingChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-item">
+                <p><strong>Monthly Expenses (Total):</strong> ${{ total_expenses | round(2) }}</p>
+                <div class="chart-container">
+                    <canvas id="monthlyExpensesTotalChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-item">
+                <p><strong>Daily Expenses:</strong> ${{ daily_expenses_total | round(2) }}</p>
+                <div class="chart-container">
+                    <canvas id="dailyExpensesChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-item">
+                <p><strong>Savings Rate:</strong> {{ savings_rate | round(2) }}%</p>
+                <div class="chart-container">
+                    <canvas id="savingsRateChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<footer>
+    <p>&copy; 2024 Shimi. All rights reserved.</p>
+</footer>
 </body>
 </html>

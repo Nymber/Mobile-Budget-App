@@ -7,12 +7,21 @@
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='styles/styles.css') }}">
 </head>
 <body>
+    <header>
     <h1>Welcome, {{ username }}!</h1>
-<a href="{{ url_for('routes.dashboard') }}" class="btn">Go to Dashboard</a>
-<a href="{{ url_for('inventory_routes.get_inventory_items') }}" class="btn">Go to Inventory</a>
-</html>
+        <div class="center-buttons">
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('routes.dashboard') }}" >Go to Dashboard</a></li>
+                    <li><a href="{{ url_for('inventory_routes.get_inventory_items') }}" >Go to Inventory</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-    <h2>Add Item to Inventory</h2>
+
+
+    <h1 class="center">Add Item to Inventory</h1>
     <form method="POST" action="{{ url_for('routes.inventory') }}">
         <label for="item_name">Item Name:</label>
         <input type="text" id="item_name" name="item_name" required><br><br>

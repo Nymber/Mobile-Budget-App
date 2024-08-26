@@ -15,9 +15,15 @@
     </style>
 </head>
 <body>
-    <h1>View Expenses</h1>
-    <a href="{{ url_for('routes.dashboard') }}" class="btn">Go back to Dashboard</a>
-    <a href="{{ url_for('routes.download_excel') }}" class="btn">Download Excel</a>
+    <header>
+        <h1>View Expenses</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('routes.dashboard') }}">Go back to Dashboard</a></li>
+                <li><a href="{{ url_for('routes.download_excel') }}">Download Excel</a></li>
+            </ul>
+        </nav>
+    </header>
     <div class="container">
         <table id="expensesTable" class="display">
             <thead>

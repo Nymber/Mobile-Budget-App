@@ -6,9 +6,9 @@ from io import BytesIO
 
 # Local imports
 from app_settings import app
-import calculations
+import calculations as calculations
 from calculations import calculated
-import db_env
+import db_env as db_env
 from db_env import db
 
 
@@ -24,43 +24,42 @@ def index():
 def download_excel_earnings():
 
     # Query all Expense records from the database
-    if 'username' in session:
-        earnings = db_env.DailyEarning.query.filter_by(username=session['username']).all()
+    if 'username' not in session:
+        return redirect(url_for('routes.login'))
+    earnings = db_env.DailyEarning.query.filter_by(username=session['username']).all()
 
-        # Create lists to store data for each column
-        names = [earning.username for earning in earnings]
-        hourly_rates = [earning.hourly_rate for earning in earnings]
-        hours_worked = [earning.hours for earning in earnings]
-        cash_tips = [earning.cash_tips for earning in earnings]
-        salaries = [earning.salary for earning in earnings]
-        timestamps = [earning.timestamp for earning in earnings]
+    # Create lists to store data for each column
+    names = [earning.username for earning in earnings]
+    hourly_rates = [earning.hourly_rate for earning in earnings]
+    hours_worked = [earning.hours for earning in earnings]
+    cash_tips = [earning.cash_tips for earning in earnings]
+    salaries = [earning.salary for earning in earnings]
+    timestamps = [earning.timestamp for earning in earnings]
 
-        # Create a DataFrame from the extracted data
-        df = pd.DataFrame({
-            'date': timestamps,
-            'cash_tips/paychecks': cash_tips,
-            'salaries': salaries,
-            'hours_worked': hours_worked,
-            'hourly_rates': hourly_rates,
-        })
+    # Create a DataFrame from the extracted data
+    df = pd.DataFrame({
+        'date': timestamps,
+        'cash_tips/paychecks': cash_tips,
+        'salaries': salaries,
+        'hours_worked': hours_worked,
+        'hourly_rates': hourly_rates,
+    })
 
-        # Export the DataFrame to an Excel file in memory (BytesIO)
-        excel_buffer = BytesIO()
-        df.to_excel(excel_buffer, index=False)
-        excel_buffer.seek(0)  # Reset buffer position to the beginning
+    # Export the DataFrame to an Excel file in memory (BytesIO)
+    excel_buffer = BytesIO()
+    df.to_excel(excel_buffer, index=False)
+    excel_buffer.seek(0)  # Reset buffer position to the beginning
 
-        # Specify the attachment filename
-        excel_file_path = 'expense_data.xlsx'
+    # Specify the attachment filename
+    excel_file_path = 'expense_data.xlsx'
 
     # Send the Excel file as a downloadable response
-        return send_file(
-            excel_buffer,
-            as_attachment=True,
-            download_name='earnings_data.xlsx',
-            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
-    else:
-            return redirect(url_for('routes.login'))
+    return send_file(
+        excel_buffer,
+        as_attachment=True,
+        download_name='earnings_data.xlsx',
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
         
 @routes.route('/download_excel_expenses', methods=['GET'])
 def download_excel():
@@ -522,12 +521,9 @@ charts = Blueprint('charts', __name__)
 
 @charts.route('/api/financial_overview', methods=['GET'])
 def get_financial_overview():
-
-    # Query the FinancialOverview data from the last 30 days
     thirty_days_ago = datetime.now() - timedelta(days=30)
     records = db_env.FinancialOverview.query.filter(db_env.FinancialOverview.timestamp >= thirty_days_ago).all()
 
-    # Prepare data for charts
     data = {
         'labels': [record.timestamp.strftime('%Y-%m-%d') for record in records],
         'daily_earnings': [record.daily_earnings for record in records],
@@ -538,5 +534,5 @@ def get_financial_overview():
         'savings_rate': [record.savings_rate for record in records],
         'total_expenses': [record.total_expenses for record in records]
     }
-    
+
     return jsonify(data)

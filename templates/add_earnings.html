@@ -5,42 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Earnings</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}">
-    <style>
-        /* Add additional styles inline if needed */
-        /* You can copy the styles from the provided stylesheet and paste them here */
-    </style>
-    <script>
-        function showHideForms() {
-            var hourlyFields = document.getElementById('hourly_fields');
-            var salaryFields = document.getElementById('salary_fields');
-            var hourlyRadio = document.getElementById('hourly');
-            var salaryRadio = document.getElementById('salary');
-        
-            if (hourlyRadio.checked) {
-                // Reset salary fields to default values
-                document.getElementById('salary_input').value = 0;
-                // Show hourly fields
-                hourlyFields.style.display = "block";
-                // Hide salary fields
-                salaryFields.style.display = "none";
-            } else if (salaryRadio.checked) {
-                // Reset hourly fields to default values
-                document.getElementById('hourly_rate').value = 0;
-                document.getElementById('hours').value = 0;
-                document.getElementById('cash_tips').value = 0;
-                // Show salary fields
-                salaryFields.style.display = "block";
-                // Hide hourly fields
-                hourlyFields.style.display = "none";
-            }
-        }
-    </script>
+    <script src="{{ url_for('static', filename='inventory.js') }}"></script>
 </head>
 <body>
     <header>
         <h1>Daily Earnings</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('routes.dashboard') }}" class="link">Go back to Dashboard</a></li>
+            </ul>
+        </nav>
     </header>
-    <a href="{{ url_for('routes.dashboard') }}" class="btn"class="link">Go back to Dashboard</a>
     <form method="POST" action="{{ url_for('routes.add_earnings') }}" class="container">
         <input type="radio" id="hourly" name="earnings_type" value="hourly" checked onclick="showHideForms()">
         <label for="hourly">Hourly</label>

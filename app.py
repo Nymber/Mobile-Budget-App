@@ -1,7 +1,7 @@
 from db_env import db
 from app_settings import app
 from routes import routes, inventory_routes, charts
-
+import task_scheduler
 
 app.register_blueprint(routes)
 app.register_blueprint(inventory_routes)
@@ -13,4 +13,4 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all() 
     # Run the Flask app
-    app.run(debug=False)
+    app.run(debug=True)

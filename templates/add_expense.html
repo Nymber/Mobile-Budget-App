@@ -3,12 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/styles.css') }}">
     <title>Add Expense</title>
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
 </head>
 <body>
-    <h1>Add Expense</h1>
-    <a href="{{ url_for('routes.dashboard') }}" class="btn">Go back to Dashboard</a>
+    <header>
+        <h1>Add Expense</h1>
+        <nav>
+            <ul>
+
+                <li><a href="{{ url_for('routes.dashboard') }}" >Go back to Dashboard</a></li>
+            </ul>
+        </nav>
+    </header>
     <form method="POST" action="{{ url_for('routes.add_expense') }}">
         <div class="center-label">
             <label for="name">Expense Name:</label><br>
