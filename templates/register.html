@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
+    <title>Registration</title>
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
 </head>
 <body>
     <div class="container">
-        <h2>User Registration</h2>
+        <h2>Registration</h2>
         <form method="POST" action="{{ url_for('routes.register') }}">
             <div class="form-group">
                 <label for="username">Username</label>
@@ -24,7 +24,7 @@
             </div>
             <button type="submit">Register</button>
         </form>
-        <p>Already have an account? <a href="{{ url_for('routes.login') }}">Login here</a></p>
+        <p>Already have an account? <a href="{{ url_for('routes.login') }}">Login</a></p>
     </div>
     <footer>
         <p>&copy; 2024 Shimi. All rights reserved.</p>

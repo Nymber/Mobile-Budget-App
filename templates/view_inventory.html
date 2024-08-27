@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Inventory Items</title>
+    <title>Inventory</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <style>
@@ -16,13 +16,13 @@
 </head>
 <body>
     <header>
-        <h1 class="center">Inventory Items</h1>
+        <h1 class="center">Inventory</h1>
         <div class="center-buttons">
             <nav>
                 <ul>
-                    <li><a href="{{ url_for('routes.dashboard') }}" >Go back to Dashboard</a></li>
+                    <li><a href="{{ url_for('routes.dashboard') }}" >Dashboard</a></li>
                     <li><a href="{{ url_for('inventory_routes.view_inventory') }}" >Add Item</a></li>
-                    <li><a href="{{ url_for('inventory_routes.download_excel_inventory') }}" >Download Excel Spreadsheet</a></li>
+                    <li><a href="{{ url_for('inventory_routes.download_excel_inventory') }}" >Download Excelsheet</a></li>
                 </ul>
             </nav>
         </div>

@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory System</title>
+    <title>Add Item</title>
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='styles/styles.css') }}">
 </head>
 <body>
     <header>
-    <h1>Welcome, {{ username }}!</h1>
+    <h1>Add Item</h1>
         <div class="center-buttons">
             <nav>
                 <ul>
-                    <li><a href="{{ url_for('routes.dashboard') }}" >Go to Dashboard</a></li>
-                    <li><a href="{{ url_for('inventory_routes.get_inventory_items') }}" >Go to Inventory</a></li>
+                    <li><a href="{{ url_for('routes.dashboard') }}" >Dashboard</a></li>
+                    <li><a href="{{ url_for('inventory_routes.get_inventory_items') }}" >Inventory</a></li>
                 </ul>
             </nav>
         </div>

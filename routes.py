@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from flask import send_file, Blueprint, render_template, request, redirect, url_for, session, jsonify, flash
 from sqlalchemy import func
+from sqlalchemy.orm import Query
 import pandas as pd
 from io import BytesIO
 
@@ -14,6 +15,23 @@ from db_env import db
 
 
 routes = Blueprint('routes', __name__)
+
+# Ensure correct typing in filter conditions
+
+
+def build_filter(query: Query, column, value, operator='=='):
+    """Builds a filter condition for SQLAlchemy queries, ensuring correct types."""
+    if value is None:
+        return query
+    if operator == '==':
+        return query.filter(column == value)
+    elif operator == '>=':
+        return query.filter(column >= value)
+    elif operator == '<':
+        return query.filter(column < value)
+    else:
+        raise ValueError(f"Unsupported operator {operator}")
+
 
 # Routes and views
 @routes.route('/')
@@ -127,9 +145,48 @@ def register():
             return redirect(url_for('routes.register'))
 
         account = db_env.Account(username=username, password=password, email=email, ip_address=ip_address)
-        db.session.add(account)
-        db.session.commit()
-        return redirect(url_for('routes.login'))
+        calc = calculated(username, account)
+        
+        if account:
+            if calc is None:
+                # Handle the case where the calculated object could not be created
+                print(f"Failed to create calculated object for user: {username}")
+                return render_template('error.html', message="Failed to calculate financial data.")
+            else:
+                # Create initial entry 
+                new_financial_overview = db_env.FinancialOverview(
+                    username=username,
+                    monthly_savings_goal=account.monthly_savings_goal,
+                    daily_limit=calc.daily_limit,
+                    total_income=calc.total_income,
+                    daily_earnings=calc.daily_earnings,
+                    weekly_earnings=calc.weekly_earnings,
+                    monthly_expenses_non_repeating=calc.monthly_expenses_non_repeating,
+                    monthly_expenses_repeating=calc.monthly_expenses_repeating,
+                    total_money_spent_today=calc.total_money_spent_today,
+                    daily_expenses_total=calc.daily_expenses_total,
+                    monthly_earnings=calc.monthly_earnings,
+                    savings_rate=calc.savings_rate,
+                    average_daily_expenses=calc.average_daily_expenses,
+                    total_expenses=calc.total_expenses,
+                    start_of_month=calc.start_of_month,
+                    end_of_month=calc.end_of_month,
+                    start_of_week=calc.start_of_week,
+                    end_of_week=calc.end_of_week,
+                    timestamp=datetime.utcnow()
+                )
+
+                try:
+                    db.session.add(new_financial_overview)
+                    db.session.commit()
+                    print("New entry created successfully.")
+                except Exception as e:
+                    db.session.rollback()
+                    print(f"An error occurred while creating a new entry: {e}")
+                db.session.add(account)
+                db.session.commit()
+                return redirect(url_for('routes.login'))
+        return render_template('register.html')
     return render_template('register.html')
 
 
@@ -191,87 +248,127 @@ def fetch_inventory_items():
 @routes.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     if 'username' in session:
-
-        # Initialize variables
         username = session['username']
-
-        # Retrieve account information
         account = db_env.Account.query.filter_by(username=username).first()
         calc = calculated(username, account)
+        
         if account:
-            if request.method == 'POST':
+            if calc is None:
+                # Handle the case where the calculated object could not be created
+                print(f"Failed to create calculated object for user: {username}")
+                return render_template('error.html', message="Failed to calculate financial data.")
 
-                # Handle form submission for setting monthly savings goal
-                monthly_savings_goal = float(request.form['monthly_savings_goal'])
-                account.monthly_savings_goal = monthly_savings_goal
-                db.session.commit()
-
-                start_of_day = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
-                end_of_day = start_of_day + timedelta(days=1)
-
-                # Query the database for an existing FinancialOverview entry for the user for today
-                existing_financial_overview = db_env.FinancialOverview.query.filter(
-                    db_env.FinancialOverview.username == username,
-                    db_env.FinancialOverview.timestamp >= start_of_day,
-                    db_env.FinancialOverview.timestamp < end_of_day
-                ).first()
-
-                if existing_financial_overview:
-                    print("An entry already exists for today. Updating the existing entry.")
-
-                    # Update the existing entry with new values
-                    existing_financial_overview.monthly_savings_goal = account.monthly_savings_goal
-                    existing_financial_overview.daily_limit = calc.daily_limit
-                    existing_financial_overview.total_income = calc.total_income
-                    existing_financial_overview.daily_earnings = calc.daily_earnings
-                    existing_financial_overview.weekly_earnings = calc.weekly_earnings
-                    existing_financial_overview.monthly_expenses_non_repeating = calc.monthly_expenses_non_repeating
-                    existing_financial_overview.monthly_expenses = calc.monthly_expenses
-                    existing_financial_overview.total_money_spent_today = calc.total_money_spent_today
-                    existing_financial_overview.daily_expenses_total = calc.daily_expenses_total
-                    existing_financial_overview.monthly_earnings = calc.monthly_earnings
-                    existing_financial_overview.savings_rate = calc.savings_rate
-                    existing_financial_overview.average_daily_expenses = calc.average_daily_expenses
-                    existing_financial_overview.total_expenses = calc.total_expenses
-                    existing_financial_overview.start_of_month = calc.start_of_month
-                    existing_financial_overview.end_of_month = calc.end_of_month
-                    existing_financial_overview.start_of_week = calc.start_of_week
-                    existing_financial_overview.end_of_week = calc.end_of_week
-                    existing_financial_overview.timestamp = datetime.utcnow()  # Update timestamp if necessary
-
-                    try:
+            else:
+                if request.method == 'POST':
+                    monthly_savings_goal = request.form.get('monthly_savings_goal', type=float)
+                    if monthly_savings_goal is not None:
+                        account.monthly_savings_goal = monthly_savings_goal
                         db.session.commit()
-                        print("Existing entry updated successfully.")
-                    except Exception as e:
-                        db.session.rollback()
-                        print(f"An error occurred while updating: {e}")
 
-            # Render the dashboard template with the forecast data
+                    start_of_day = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+                    end_of_day = start_of_day + timedelta(days=1)
+
+                    # Build the query using the helper function
+                    query = db_env.FinancialOverview.query
+                    query = build_filter(query, db_env.FinancialOverview.username, account.username, '==')
+                    query = build_filter(query, db_env.FinancialOverview.timestamp, start_of_day, '>=')
+                    query = build_filter(query, db_env.FinancialOverview.timestamp, end_of_day, '<')
+
+                    # Fetch the existing financial overview for the user for today
+                    existing_financial_overview = query.first()
+
+                    # Check if there is an existing entry
+                    if existing_financial_overview:
+                        entry_date = existing_financial_overview.timestamp.date()
+                        current_date = datetime.utcnow().date()
+
+                        # Check if the entry is for the current day by comparing dates
+                        if entry_date == current_date:
+                            print(f"An entry already exists for today for user: {username}. Updating the existing entry.")
+                            # Update the existing entry with new values
+                            existing_financial_overview.monthly_savings_goal = account.monthly_savings_goal
+                            existing_financial_overview.daily_limit = calc.daily_limit
+                            existing_financial_overview.total_income = calc.total_income
+                            existing_financial_overview.daily_earnings = calc.daily_earnings
+                            existing_financial_overview.weekly_earnings = calc.weekly_earnings
+                            existing_financial_overview.monthly_expenses_non_repeating = calc.monthly_expenses_non_repeating
+                            existing_financial_overview.monthly_expenses_repeating = calc.monthly_expenses_repeating
+                            existing_financial_overview.monthly_expenses = calc.monthly_expenses
+                            existing_financial_overview.total_money_spent_today = calc.total_money_spent_today
+                            existing_financial_overview.daily_expenses_total = calc.daily_expenses_total
+                            existing_financial_overview.monthly_earnings = calc.monthly_earnings
+                            existing_financial_overview.savings_rate = calc.savings_rate
+                            existing_financial_overview.average_daily_expenses = calc.average_daily_expenses
+                            existing_financial_overview.total_expenses = calc.total_expenses
+                            existing_financial_overview.start_of_month = calc.start_of_month
+                            existing_financial_overview.end_of_month = calc.end_of_month
+                            existing_financial_overview.start_of_week = calc.start_of_week
+                            existing_financial_overview.end_of_week = calc.end_of_week
+                            existing_financial_overview.timestamp = datetime.utcnow()  # Update timestamp if necessary
+
+                            try:
+                                db.session.commit()
+                                print("Existing entry updated successfully.")
+                            except Exception as e:
+                                db.session.rollback()
+                                print(f"An error occurred while updating: {e}")
+                        else:
+                            print("No entry found for today. Creating a new entry.")
+                            # Create a new entry for today
+                            new_financial_overview = db_env.FinancialOverview(
+                                username=username,
+                                monthly_savings_goal=account.monthly_savings_goal,
+                                daily_limit=calc.daily_limit,
+                                total_income=calc.total_income,
+                                daily_earnings=calc.daily_earnings,
+                                weekly_earnings=calc.weekly_earnings,
+                                monthly_expenses_non_repeating=calc.monthly_expenses_non_repeating,
+                                monthly_expenses_repeating=calc.monthly_expenses_repeating,
+                                total_money_spent_today=calc.total_money_spent_today,
+                                daily_expenses_total=calc.daily_expenses_total,
+                                monthly_earnings=calc.monthly_earnings,
+                                savings_rate=calc.savings_rate,
+                                average_daily_expenses=calc.average_daily_expenses,
+                                total_expenses=calc.total_expenses,
+                                start_of_month=calc.start_of_month,
+                                end_of_month=calc.end_of_month,
+                                start_of_week=calc.start_of_week,
+                                end_of_week=calc.end_of_week,
+                                timestamp=datetime.utcnow()
+                            )
+
+                            try:
+                                db.session.add(new_financial_overview)
+                                db.session.commit()
+                                print("New entry created successfully.")
+                            except Exception as e:
+                                db.session.rollback()
+                                print(f"An error occurred while creating a new entry: {e}")
+
             return render_template('dashboard.html',
                                    username=username,
                                    monthly_savings_goal=account.monthly_savings_goal,
-                                   daily_limit=calculations.calculated(username, account).daily_limit,
-                                   total_income=calculations.calculated(username, account).total_income,
-                                   daily_earnings=calculations.calculated(username, account).daily_earnings,
-                                   weekly_earnings=calculations.calculated(username, account).weekly_earnings,
-                                   monthly_expenses_non_repeating=calculations.calculated(username, account).monthly_expenses_non_repeating,
-                                   monthly_expenses=calculations.calculated(username, account).monthly_expenses,
-                                   total_money_spent_today=calculations.calculated(username, account).total_money_spent_today,
-                                   daily_expenses_total=calculations.calculated(username, account).daily_expenses_total,  # Pass daily_expenses_total here
-                                   monthly_earnings=calculations.calculated(username, account).monthly_earnings,
-                                   savings_rate=calculations.calculated(username, account).savings_rate,
-                                   average_daily_expenses=calculations.calculated(username, account).average_daily_expenses,
-                                   expense_forecast=calculations.calculated(username, account).expense_forecast,
-                                   earnings_forecast=calculations.calculated(username, account).earnings_forecast,
-                                   savings_forecast=calculations.calculated(username, account).savings_forecast,
-                                   total_expenses=calculations.calculated(username, account).total_expenses,
-                                   start_of_month=calculations.calculated(username, account).start_of_month,
-                                   end_of_month=calculations.calculated(username, account).end_of_month,
-                                   start_of_week=calculations.calculated(username, account).start_of_week,
-                                   end_of_week=calculations.calculated(username, account).end_of_week)
+                                   daily_limit=calc.daily_limit,
+                                   total_income=calc.total_income,
+                                   daily_earnings=calc.daily_earnings,
+                                   weekly_earnings=calc.weekly_earnings,
+                                   monthly_expenses_non_repeating=calc.monthly_expenses_non_repeating,
+                                   monthly_expenses_repeating=calc.monthly_expenses_repeating,
+                                   total_money_spent_today=calc.total_money_spent_today,
+                                   daily_expenses_total=calc.daily_expenses_total,
+                                   monthly_earnings=calc.monthly_earnings,
+                                   savings_rate=calc.savings_rate,
+                                   average_daily_expenses=calc.average_daily_expenses,
+                                   expense_forecast=calc.expense_forecast,
+                                   earnings_forecast=calc.earnings_forecast,
+                                   savings_forecast=calc.savings_forecast,
+                                   total_expenses=calc.total_expenses,
+                                   start_of_month=calc.start_of_month,
+                                   end_of_month=calc.end_of_month,
+                                   start_of_week=calc.start_of_week,
+                                   end_of_week=calc.end_of_week)
         else:
             return redirect(url_for('routes.login'))
-
     return redirect(url_for('routes.login'))
 
 
@@ -522,17 +619,26 @@ charts = Blueprint('charts', __name__)
 @charts.route('/api/financial_overview', methods=['GET'])
 def get_financial_overview():
     thirty_days_ago = datetime.now() - timedelta(days=30)
-    records = db_env.FinancialOverview.query.filter(db_env.FinancialOverview.timestamp >= thirty_days_ago).all()
 
+    # Start building the query using the build_filter function
+    query = db_env.FinancialOverview.query
+    query = build_filter(query, db_env.FinancialOverview.timestamp, thirty_days_ago, '>=')
+
+    # Execute the query and fetch all records
+    records = query.all()
+
+    # Prepare the data to be returned in JSON format
     data = {
         'labels': [record.timestamp.strftime('%Y-%m-%d') for record in records],
         'daily_earnings': [record.daily_earnings for record in records],
         'weekly_earnings': [record.weekly_earnings for record in records],
         'monthly_earnings': [record.monthly_earnings for record in records],
-        'total_money_spent_today': [record.total_money_spent_today for record in records],
+        'total_money_spent_today': [record.daily_expenses_total for record in records],
         'daily_expenses_total': [record.daily_expenses_total for record in records],
         'savings_rate': [record.savings_rate for record in records],
-        'total_expenses': [record.total_expenses for record in records]
+        'total_expenses': [record.total_expenses for record in records],
+        'monthly_expenses_repeating': [record.monthly_expenses_repeating for record in records],
+        'monthly_expenses_non_repeating': [record.monthly_expenses_non_repeating for record in records]
     }
 
     return jsonify(data)

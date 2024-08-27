@@ -71,6 +71,7 @@ class FinancialOverview(db.Model):
     daily_earnings = db.Column(db.Float)
     weekly_earnings = db.Column(db.Float)
     monthly_expenses_non_repeating = db.Column(db.Float)
+    monthly_expenses_repeating = db.Column(db.Float)
     monthly_expenses = db.Column(db.Float)
     total_money_spent_today = db.Column(db.Float)
     daily_expenses_total = db.Column(db.Float)
@@ -83,12 +84,25 @@ class FinancialOverview(db.Model):
     start_of_week = db.Column(db.DateTime)
     end_of_week = db.Column(db.DateTime)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
-    def __init__(self, username, monthly_savings_goal=None, daily_limit=None, total_income=None,
-                 daily_earnings=None, weekly_earnings=None, monthly_expenses_non_repeating=None,
-                 monthly_expenses=None, total_money_spent_today=None, daily_expenses_total=None,
-                 monthly_earnings=None, savings_rate=None, average_daily_expenses=None,
-                 total_expenses=None, start_of_month=None, end_of_month=None, start_of_week=None,
-                 end_of_week=None, timestamp=None):
+    def __init__(self, username=None, 
+                 monthly_savings_goal=None, 
+                 daily_limit=None, total_income=None,
+                 daily_earnings=None, 
+                 weekly_earnings=None, 
+                 monthly_expenses_non_repeating=None,
+                 monthly_expenses_repeating = None,
+                 monthly_expenses=None, 
+                 total_money_spent_today=None, 
+                 daily_expenses_total=None,
+                 monthly_earnings=None, 
+                 savings_rate=None, 
+                 average_daily_expenses=None,
+                 total_expenses=None, 
+                 start_of_month=None, 
+                 end_of_month=None, 
+                 start_of_week=None,
+                 end_of_week=None, 
+                 timestamp=None):
         self.username = username
         self.monthly_savings_goal = monthly_savings_goal
         self.daily_limit = daily_limit
@@ -96,6 +110,7 @@ class FinancialOverview(db.Model):
         self.daily_earnings = daily_earnings
         self.weekly_earnings = weekly_earnings
         self.monthly_expenses_non_repeating = monthly_expenses_non_repeating
+        self.monthly_expenses_repeating = monthly_expenses_repeating
         self.monthly_expenses = monthly_expenses
         self.total_money_spent_today = total_money_spent_today
         self.daily_expenses_total = daily_expenses_total

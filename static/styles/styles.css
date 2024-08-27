@@ -37,14 +37,48 @@ header {
 }
 
 .chart-container {
-    flex: 1; /* Chart container takes the remaining space */
-    max-width: 250px; /* Maximum width of the chart container */
+    flex: 1;
+    width: 100%;
+    max-width: 100%; /* Ensure the chart container takes full width */
+    height: auto; /* Adjust height dynamically */
+}
+.chart-container2 {
+    flex: 1;
+    width: 100%;
+    max-width: 100%; /* Ensure the chart container takes full width */
+    height: auto; /* Adjust height dynamically */
+}
+.chart-container3 {
+    flex: 1;
+    width: 100%;
+    max-width: 100%; /* Ensure the chart container takes full width */
+    height: auto; /* Adjust height dynamically */
 }
 
-/* Ensure all canvas elements are styled */
-canvas {
-    width: 100% !important;
-    height: auto !important;
+/* Style the new flex-item class */
+.flex-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+
+/* Flexbox styles for rows of 1, 2, 3 repeat */
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.flex-item {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 33.33%;
+    max-width: 33.33%;
+    box-sizing: border-box;
+    padding: 10px;
 }
 
 /* Style the main content section */
@@ -198,6 +232,19 @@ a {
 
 /* Media query for responsiveness */
 @media only screen and (max-width: 768px) {
+    .flex-item {
+        flex: 1 1 100%; /* Each item takes full width on smaller screens */
+        max-width: 100%;
+    }
+    .chart-item {
+        flex-direction: column; /* Stack vertically */
+        align-items: flex-start;
+    }
+    .chart-item p {
+        text-align: left;
+        margin-bottom: 10px;
+    }
+
     header {
         padding: 10px; /* Adjusted padding for smaller screens */
     }

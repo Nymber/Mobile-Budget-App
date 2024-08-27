@@ -15,7 +15,7 @@
     <nav>
         <ul>
             <li><a href="/">Home</a></li>
-            <li><a href="{{ url_for('inventory_routes.get_inventory_items') }}">View Inventory</a></li>
+            <li><a href="{{ url_for('inventory_routes.get_inventory_items') }}">Inventory</a></li>
             <li><a href="/logout">Logout</a></li>
         </ul>
     </nav>
@@ -38,60 +38,80 @@
                 </div>
             </section>
             <!-- Add canvas elements for each chart -->
-            <div class="chart-item">
-                <p><strong>Total Money Spent In 24 Hours:</strong> ${{ total_money_spent_today | round(2) }}</p>
-                <div class="chart-container">
-                    <canvas id="totalMoneySpentChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-item">
-                <p><strong>Daily Earnings:</strong> ${{ daily_earnings | round(2) }}</p>
-                <div class="chart-container">
-                    <canvas id="dailyEarningsChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-item">
-                <p><strong>Weekly Earnings:</strong> ${{ weekly_earnings | round(2) }}</p>
-                <div class="chart-container">
-                    <canvas id="weeklyEarningsChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-item">
-                <p><strong>Monthly Earnings:</strong> ${{ monthly_earnings | round(2) }}</p>
-                <div class="chart-container">
-                    <canvas id="monthlyEarningsChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-item">
-                <p><strong>Monthly Expenses (Non-Repeating):</strong> ${{ monthly_expenses_non_repeating | round(2) }}</p>
-                <div class="chart-container">
-                    <canvas id="monthlyExpensesNonRepeatingChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-item">
-                <p><strong>Monthly Expenses (Repeating):</strong> ${{ monthly_expenses | round(2) }}</p>
-                <div class="chart-container">
-                    <canvas id="monthlyExpensesRepeatingChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-item">
-                <p><strong>Monthly Expenses (Total):</strong> ${{ total_expenses | round(2) }}</p>
-                <div class="chart-container">
-                    <canvas id="monthlyExpensesTotalChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-item">
-                <p><strong>Daily Expenses:</strong> ${{ daily_expenses_total | round(2) }}</p>
-                <div class="chart-container">
-                    <canvas id="dailyExpensesChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-item">
-                <p><strong>Savings Rate:</strong> {{ savings_rate | round(2) }}%</p>
-                <div class="chart-container">
-                    <canvas id="savingsRateChart"></canvas>
-                </div>
-            </div>
+            <ul class="flex-container">
+                <li class="flex-item">
+                    <div class="chart-item">
+                        <p><strong>Total Money Spent In 24 Hours:</strong> ${{ total_money_spent_today | round_env(2) }}</p>
+                        <div class="chart-container">
+                            <canvas id="totalMoneySpentChart"></canvas>
+                        </div>
+                    </div>
+                </li>
+                <li class="flex-item">
+                    <div class="chart-item">
+                        <p><strong>Daily Earnings:</strong> ${{ daily_earnings | round_env(2) }}</p>
+                        <div class="chart-container2">
+                            <canvas id="dailyEarningsChart"></canvas>
+                        </div>
+                    </div>
+                </li>
+                <li class="flex-item">
+                    <div class="chart-item">
+                        <p><strong>Weekly Earnings:</strong> ${{ weekly_earnings | round_env(2) }}</p>
+                        <div class="chart-container3">
+                            <canvas id="weeklyEarningsChart"></canvas>
+                        </div>
+                    </div>
+                </li>
+                <li class="flex-item">
+                    <div class="chart-item">
+                        <p><strong>Monthly Earnings:</strong> ${{ monthly_earnings | round_env(2) }}</p>
+                        <div class="chart-container">
+                            <canvas id="monthlyEarningsChart"></canvas>
+                        </div>
+                    </div>
+                </li>
+                <li class="flex-item">
+                    <div class="chart-item">
+                        <p><strong>Monthly Expenses (Non-Repeating):</strong> ${{ monthly_expenses_non_repeating | round_env(2) }}</p>
+                        <div class="chart-container2">
+                            <canvas id="monthlyExpensesNonRepeatingChart"></canvas>
+                        </div>
+                    </div>
+                </li>
+                <li class="flex-item">
+                    <div class="chart-item">
+                        <p><strong>Monthly Expenses (Repeating):</strong> ${{ monthly_expenses_repeating | round_env(2) }}</p>
+                        <div class="chart-container3">
+                            <canvas id="monthlyExpensesRepeatingChart"></canvas>
+                        </div>
+                    </div>
+                </li>
+                <li class="flex-item">
+                    <div class="chart-item">
+                        <p><strong>Monthly Expenses (Total):</strong> ${{ total_expenses | round_env(2) }}</p>
+                        <div class="chart-container">
+                            <canvas id="monthlyExpensesTotalChart"></canvas>
+                        </div>
+                    </div>
+                </li>
+                <li class="flex-item">
+                    <div class="chart-item">
+                        <p><strong>Daily Expenses:</strong> ${{ daily_expenses_total | round_env(2) }}</p>
+                        <div class="chart-container2">
+                            <canvas id="dailyExpensesChart"></canvas>
+                        </div>
+                    </div>
+                </li>
+                <li class="flex-item">
+                    <div class="chart-item">
+                        <p><strong>Savings Rate:</strong> {{ savings_rate | round_env(2) }}%</p>
+                        <div class="chart-container3">
+                            <canvas id="savingsRateChart"></canvas>
+                        </div>
+                    </div>
+                </li>
+            </ul>
         </div>
     </section>
 </main>

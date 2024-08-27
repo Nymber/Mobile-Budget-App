@@ -1,7 +1,7 @@
 from db_env import db
 from app_settings import app
 from routes import routes, inventory_routes, charts
-import task_scheduler
+from task_scheduler import scheduler
 
 app.register_blueprint(routes)
 app.register_blueprint(inventory_routes)
