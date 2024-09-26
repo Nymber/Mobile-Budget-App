@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
+    <title>To-Do List</title>
+</head>
+<header>
+    <h1>Welcome, {{ username }}!</h1>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('routes.dashboard') }}">Dashboard</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">Menu</a>
+                <ul class="dropdown-content">
+                    <li><a href="{{ url_for('inventory_routes.get_inventory_items') }}">Inventory</a></li>
+                    <li><a href="{{ url_for('tasks.task') }}">Tasks</a></li>
+                </ul>
+            </li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+</header>
+<body>
+    <h1>To-Do List</h1>
+    <a href="/add_task">Add a new task</a>
+    <form>
+        <ul>
+            {% for task in tasks %}
+            <li>
+                {% if task.is_complete %}
+                    <strike>{{ task.title }}</strike>
+                {% else %}
+                    {{ task.title }}
+                {% endif %}
+                <a href="/complete_task/{{ task.id }}">[Mark as {{ 'Incomplete' if task.is_complete else 'Complete' }}]</a>
+                <a href="/delete_task/{{ task.id }}">[Delete]</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </form>
+</body>
+</html>

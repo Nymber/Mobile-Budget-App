@@ -13,19 +13,30 @@ db = SQLAlchemy(app)
 # Database models
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Float, nullable=False)
     repeating = db.Column(db.Boolean, default=False)
-    username = db.Column(db.String(100), nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(100), nullable=False)
+    is_complete = db.Column(db.Boolean, default=False)
+    repeat_daily = db.Column(db.Boolean, default=False)  # New field to mark task as repeating
+    last_completed_date = db.Column(db.Date, nullable=True)  # New field to track the last completion date
+
+    def __repr__(self):
+        return f'<Task {self.title}>'
 
 class DailyEarning(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), nullable=False)
     hourly_rate = db.Column(db.Float)
     hours = db.Column(db.Float)
     cash_tips = db.Column(db.Float)
     salary = db.Column(db.Float)
-    username = db.Column(db.String(100), nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 class Account(db.Model):
@@ -48,10 +59,10 @@ class Account(db.Model):
 
 class InventoryItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), nullable=False)
     item_name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Float, nullable=False)
     unit_of_measurement = db.Column(db.String(20), nullable=False)  # For example: oz, gal, etc.
-    username = db.Column(db.String(100), nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     def __init__(self, item_name, quantity, unit_of_measurement, username):

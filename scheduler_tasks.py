@@ -30,6 +30,7 @@ def update_spending_limit():
         # Handle exceptions or log errors
 
         print(f"Error updating spending limit: {str(e)}")
+        
 @scheduler.task('cron', id='update_spending_limit', hour=0)
 def update_spending_limit():
     users = db_env.Account.query.all()
@@ -73,4 +74,21 @@ def update_spending_limit():
                 db.session.rollback()
                 print(f"An error occurred while creating a new entry: {e}")
 
+@scheduler.task('cron', id='reset_repeating_tasks', hour=0)  # Runs daily at midnight
+def reset_repeating_tasks():
+    try:
+        tasks = db_env.Task.query.filter_by(repeat_daily=True).all()
+        today = date.today()
+        
+        for task in tasks:
+            if task.last_completed_date != today:  # If the task wasn't completed today
+                task.is_complete = False  # Reset the task as incomplete
+                task.last_completed_date = today  # Update last completed date to today
+                db.session.commit()
+
+        print("Daily repeating tasks reset successfully.")
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred while resetting tasks: {e}")
+        
 scheduler.init_app(app)

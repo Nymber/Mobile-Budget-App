@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, date
 from flask import send_file, Blueprint, render_template, request, redirect, url_for, session, jsonify, flash
 from sqlalchemy import func
 from sqlalchemy.orm import Query
@@ -10,7 +10,7 @@ from app_settings import app
 import calculations as calculations
 from calculations import calculated
 import db_env as db_env
-from db_env import db
+from db_env import db, Task
 
 
 
@@ -642,3 +642,67 @@ def get_financial_overview():
     }
 
     return jsonify(data)
+
+
+#todo tasks
+tasks = Blueprint('tasks', __name__)
+
+#todo tasks
+@tasks.route('/task', methods=['POST', 'GET'])
+def task():
+    if 'username' in session:
+        tasks = db_env.Task.query.filter_by(username=session['username']).all()
+        username = session.get('username')
+        return render_template('task.html', tasks=tasks)
+    else:
+        return redirect(url_for('routes.login'))
+
+# Route for adding a new task
+@tasks.route('/add_task', methods=['POST', 'GET'])
+def add_task():
+    if 'username' in session:
+        if request.method == 'POST':
+            task_title = request.form['title']
+            repeat_daily = 'repeat_daily' in request.form  # Check if the repeat_daily box was checked
+            username = session.get('username')
+            new_task = Task(title=task_title, repeat_daily=repeat_daily, username=username)
+            try:
+                db.session.add(new_task)
+                db.session.commit()
+                return redirect(url_for('tasks.task'))
+            except:
+                return 'There was an issue adding your task'
+        else:
+            return render_template('add_task.html')
+    else:
+        return redirect(url_for('routes.login'))
+
+# Route to delete a task
+@tasks.route('/delete_task/<int:id>')
+def delete_task(id):
+    if 'username' in session:
+        task_to_delete = db_env.Task.query.get_or_404(id)
+        try:
+            db.session.delete(task_to_delete)
+            db.session.commit()
+            return redirect(url_for('tasks.task'))
+        except:
+            return 'There was an issue deleting the task'
+    else:
+        return redirect(url_for('routes.login'))
+
+# Route to mark a task as complete/incomplete
+@tasks.route('/complete_task/<int:id>')
+def complete_task(id):
+    if 'username' in session:
+        task = Task.query.get_or_404(id)
+        task.is_complete = not task.is_complete
+        if task.is_complete:
+            task.last_completed_date = datetime.utcnow()  # Set the last completed date
+        try:
+            db.session.commit()
+            return redirect(url_for('tasks.task'))
+        except:
+            return 'There was an issue updating the task'
+    else:
+        return redirect(url_for('routes.login'))

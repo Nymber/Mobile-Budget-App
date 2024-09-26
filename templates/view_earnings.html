@@ -20,7 +20,15 @@
         <nav>
             <ul>
                 <li><a href="{{ url_for('routes.dashboard') }}">Dashboard</a></li>
-                <li><a href="{{ url_for('routes.download_excel_earnings') }}">Download Excelsheet</a></li>
+                <li class="dropdown">
+                    <a href="javascript:void(0)" class="dropbtn">Menu</a>
+                    <ul class="dropdown-content">
+                        <li><a href="{{ url_for('inventory_routes.get_inventory_items') }}">Inventory</a></li>
+                        <li><a href="{{ url_for('tasks.task') }}">Tasks</a></li>
+                        <li><a href="{{ url_for('routes.download_excel_earnings') }}">Download Excelsheet</a></li>
+                    </ul>
+                </li>
+                <li><a href="/logout">Logout</a></li>
             </ul>
         </nav>
     </header>

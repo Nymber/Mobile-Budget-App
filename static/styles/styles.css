@@ -86,25 +86,62 @@ main {
     padding: 20px;
 }
 
-/* Style the navigation menu */
+/* Navigation Menu */
 nav ul {
     list-style-type: none;
-    display: flex; /* Use flexbox for horizontal navigation */
-    justify-content: center; /* Center align the navigation items */
+    margin: 0;
+    padding: 0;
+    background-color: #333;
+    display: flex;
+    justify-content: center;
 }
 
 nav ul li {
+    position: relative;
     margin-right: 20px;
 }
 
 nav ul li a {
-    color: #333333; /* Dark text color */
+    display: block;
+    padding: 14px 16px;
+    color: white;
+    text-align: center;
     text-decoration: none;
 }
 
 nav ul li a:hover {
-    text-decoration: underline;
+    background-color: #111;
 }
+
+/* Dropdown Menu */
+nav ul li.dropdown .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+nav ul li.dropdown .dropdown-content li {
+    padding: 12px 16px;
+}
+
+nav ul li.dropdown .dropdown-content li a {
+    color: black;
+    text-decoration: none;
+    display: block;
+}
+
+nav ul li.dropdown .dropdown-content li a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Show dropdown when hovering over the dropdown menu */
+nav ul li.dropdown:hover .dropdown-content {
+    display: block;
+}
+
 
 /* Style the form sections */
 section {
