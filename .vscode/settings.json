@@ -1,13 +1,3 @@
 {
-    "docwriter.style": "Auto-detect",
-    "cSpell.words": [
-        "apscheduler",
-        "dateutil",
-        "itsdangerous",
-        "relativedelta",
-        "statespace",
-        "statsmodels"
-    ],
-    "wolf.disableHotModeWarning": true,
-    "python.analysis.typeCheckingMode": "basic"
+    "python.pythonPath": "c:\\Users\\badaw\\OneDrive\\Documents\\GitHub\\Mobile-Budget-App\\backend\\.venv\\Scripts\\python.exe"
 }
