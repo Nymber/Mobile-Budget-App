@@ -3,10 +3,26 @@ import { Link } from 'react-router-dom';
 import './static/styles/styles.css';
 
 const DownloadExcel = () => {
-    const handleDownload = async () => {
+    const handleDownload = async (type) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/download-excel`, {
+            let endpoint = '';
+
+            switch (type) {
+                case 'earnings':
+                    endpoint = `${process.env.REACT_APP_API_URL}/download-excel`;
+                    break;
+                case 'inventory':
+                    endpoint = `${process.env.REACT_APP_API_URL}/download-inventory-excel`;
+                    break;
+                case 'expenses':
+                    endpoint = `${process.env.REACT_APP_API_URL}/download-expenses-excel`;
+                    break;
+                default:
+                    throw new Error('Invalid download type');
+            }
+
+            const response = await fetch(endpoint, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -17,21 +33,21 @@ const DownloadExcel = () => {
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'earnings_report.xlsx';
+                a.download = `${type}_report.xlsx`;
                 document.body.appendChild(a);
                 a.click();
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
             }
         } catch (error) {
-            console.error('Error downloading excel:', error);
+            console.error(`Error downloading ${type} excel:`, error);
         }
     };
 
     return (
         <div className="container">
             <header>
-                <h1>Download Excel Report</h1>
+                <h1>Download Excel Reports</h1>
                 <nav>
                     <ul>
                         <li><Link to="/dashboard">Dashboard</Link></li>
@@ -49,13 +65,19 @@ const DownloadExcel = () => {
             </header>
 
             <div className="download-section">
-                <p>Click the button below to download your earnings report as an Excel file.</p>
-                <button onClick={handleDownload} className="btn btn-primary">
-                    Download Excel Report
+                <p>Click the buttons below to download your reports as Excel files.</p>
+                <button onClick={() => handleDownload('earnings')} className="btn btn-primary">
+                    Download Earnings Report
+                </button>
+                <button onClick={() => handleDownload('inventory')} className="btn btn-primary mt-4">
+                    Download Inventory Report
+                </button>
+                <button onClick={() => handleDownload('expenses')} className="btn btn-primary mt-4">
+                    Download Expenses Report
                 </button>
             </div>
         </div>
     );
 };
 
-export default DownloadExcel; 
+export default DownloadExcel;

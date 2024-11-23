@@ -10,12 +10,12 @@ app = FastAPI()
 origins = [
     "http://localhost:3000",
     "http://192.168.1.100:3000",  # Add your computer's IP address
-    "http://10.0.0.31:3000",  # Add your public IP address if needed
+    "http://76.121.92.139:3000",  # Add your public IP address if needed
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

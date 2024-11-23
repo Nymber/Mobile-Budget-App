@@ -24,7 +24,10 @@ const Dashboard = () => {
         if (response.ok) {
           const data = await response.json();
           setDashboardData(data);
-          initializeCharts(data); // Initialize charts with fetched data
+          // Initialize charts after dashboard data is set
+          setTimeout(() => {
+            initializeCharts();
+          }, 100);
         } else if (response.status === 401) {
           navigate('/login');
         }
@@ -168,11 +171,9 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-white p-4 rounded-lg shadow">
               <h3 className="text-xl font-semibold text-gray-800">Daily Summary</h3>
-              <p>Daily Limit: ${(() => {
+              <p>Daily Spend Limit: ${(() => {
                 // Calculate non-repeating expenses for today
-                const dailyRepeatingExpenses = (dashboardData.monthly_expenses / 30) || 0;
-                const totalNonRepeating = dashboardData.total_money_spent_today - dailyRepeatingExpenses;
-                const remainingLimit = Math.max(0, dashboardData.daily_limit - totalNonRepeating);
+                const remainingLimit = Math.max(0, dashboardData.daily_limit - dashboardData.total_money_spent_today);
                 return remainingLimit.toFixed(2);
               })()} (Original: ${dashboardData.daily_limit})</p>
               <p>Daily Earnings: ${dashboardData.daily_earnings}</p>
@@ -188,13 +189,25 @@ const Dashboard = () => {
 
             <div className="bg-white p-4 rounded-lg shadow">
               <h3 className="text-xl font-semibold text-gray-800">Goals</h3>
-              <p>Monthly Savings Goal: ${dashboardData.monthly_savings_goal}</p>
-              <p>Savings Forecast: ${dashboardData.savings_forecast}</p>
+              <p>Monthly Savings Goal: ${dashboardData.monthly_savings_goal?.toFixed(2) || '0.00'}</p>
+              <p>Savings Forecast: ${dashboardData.savings_forecast?.toFixed(2)}</p>
               <button 
-                onClick={() => {
-                  const newGoal = prompt('Enter your monthly savings goal:');
-                  if (newGoal && !isNaN(newGoal)) {
-                    updateSavingsGoal(Number(newGoal));
+                onClick={async () => {
+                  const newGoal = prompt('Enter your monthly savings goal:', dashboardData.monthly_savings_goal);
+                  if (newGoal !== null && !isNaN(newGoal)) {
+                    await updateSavingsGoal(Number(newGoal));
+                    // Refresh dashboard data immediately after setting new goal
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`${process.env.REACT_APP_API_URL}/dashboard`, {
+                      headers: {
+                        'Authorization': `Bearer ${token}`,
+                      }
+                    });
+                    if (response.ok) {
+                      const data = await response.json();
+                      setDashboardData(data);
+                      initializeCharts();
+                    }
                   }
                 }}
                 className="btn btn-primary mt-3"
@@ -231,21 +244,25 @@ const Dashboard = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-xl font-semibold text-gray-800">Monthly Earnings</h3>
-              <canvas id="monthlyEarningsChart"></canvas>
+            <div className="chart-container">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">Monthly Earnings</h3>
+              <div id="monthlyEarningsChart" className="w-full h-[300px]"></div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-xl font-semibold text-gray-800">Monthly Expenses (Repeating)</h3>
-              <canvas id="monthlyExpensesRepeatingChart"></canvas>
+            <div className="chart-container">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">Monthly Expenses (Repeating)</h3>
+              <div id="monthlyExpensesRepeatingChart" className="w-full h-[300px]"></div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-xl font-semibold text-gray-800">Monthly Expenses (Non-Repeating)</h3>
-              <canvas id="monthlyExpensesNonRepeatingChart"></canvas>
+            <div className="chart-container">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">Monthly Expenses (Non-Repeating)</h3>
+              <div id="monthlyExpensesNonRepeatingChart" className="w-full h-[300px]"></div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-xl font-semibold text-gray-800">Daily Overview</h3>
-              <canvas id="dailyEarningsChart"></canvas>
+            <div className="chart-container">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">Daily Earnings</h3>
+              <div id="dailyEarningsChart" className="w-full h-[300px]"></div>
+            </div>
+            <div className="chart-container col-span-full">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">Total Money Spent by Day</h3>
+              <div id="totalMoneySpentChart" className="w-full h-[300px]"></div>
             </div>
           </div>
         </>

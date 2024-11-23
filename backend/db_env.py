@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, inspect, text
 from datetime import datetime
 
 # Local imports
@@ -51,6 +51,8 @@ class FinancialOverview(Base):
     total_money_spent_today = Column(Float)
     monthly_earnings = Column(Float)
     monthly_expenses = Column(Float)
+    monthly_expenses_repeating = Column(Float)  # New field
+    monthly_expenses_non_repeating = Column(Float)  # New field
     savings_rate = Column(Float)
     savings_forecast = Column(Float)
     daily_expenses_total = Column(Float)
@@ -72,6 +74,38 @@ class Account(Base):
     spending_limit = Column(Float, default=0.0)
     monthly_savings_goal = Column(Float, default=0.0)
     timestamp = Column(DateTime, default=datetime.utcnow)
+
+def migrate_database():
+    """Run database migrations safely"""
+    try:
+        # Create new columns if they don't exist
+        with engine.connect() as conn:
+            # Check if columns exist before adding them
+            inspector = inspect(engine)
+            existing_columns = {col['name'] for col in inspector.get_columns('financial_overview')}
+            
+            if 'monthly_expenses_repeating' not in existing_columns:
+                conn.execute(text("""
+                    ALTER TABLE financial_overview 
+                    ADD COLUMN monthly_expenses_repeating FLOAT DEFAULT 0.0
+                """))
+                
+            if 'monthly_expenses_non_repeating' not in existing_columns:
+                conn.execute(text("""
+                    ALTER TABLE financial_overview 
+                    ADD COLUMN monthly_expenses_non_repeating FLOAT DEFAULT 0.0
+                """))
+                
+            conn.commit()
+        
+        print("Database migration completed successfully")
+    except Exception as e:
+        print(f"Error during migration: {str(e)}")
+        raise
+
+# Run migration when file is executed directly
+if __name__ == "__main__":
+    migrate_database()
 
 # Create tables
 Base.metadata.create_all(bind=engine)

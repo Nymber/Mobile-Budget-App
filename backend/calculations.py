@@ -26,6 +26,12 @@ def verify_and_get_account(session, username) -> Union[Account, int]:
     account = get_verified_account(session, username)
     return account if account else 0
 
+def get_local_date(utc_date):
+    """Convert UTC date to local date"""
+    # Assuming EST timezone (UTC-5). Adjust offset as needed for your timezone
+    local_date = utc_date - timedelta(hours=5)
+    return local_date.replace(hour=0, minute=0, second=0, microsecond=0)
+
 def calculate_daily_limit(username, current_date):
     session = SessionLocal()
     try:
@@ -35,31 +41,20 @@ def calculate_daily_limit(username, current_date):
             
         # Calculate base daily limit
         monthly_earnings = calculate_monthly_earnings(username)
-        monthly_expenses = (
-            calculate_monthly_expenses_repeating(username) + 
-            calculate_non_repeating_monthly_expenses(username, current_date)
-        )
-        monthly_savings_goal = account.monthly_savings_goal
-        base_daily_limit = (monthly_earnings - monthly_expenses - monthly_savings_goal) / 30
-
-        # Get any carryover from previous day
-        yesterday = current_date - timedelta(days=1)
-        previous_overview = session.query(FinancialOverview).filter(
-            FinancialOverview.username == username,
-            FinancialOverview.timestamp >= yesterday.replace(hour=0, minute=0, second=0),
-            FinancialOverview.timestamp < yesterday.replace(hour=23, minute=59, second=59)
-        ).first()
-
-        carryover = previous_overview.unused_daily_limit if previous_overview else 0
+        monthly_expenses_repeating = calculate_monthly_expenses_repeating(username)
+        monthly_savings_goal = account.monthly_savings_goal or 0
         
-        # Add carryover to base limit
-        total_daily_limit = base_daily_limit + carryover
-
-        # Add any spending limit buffer
-        spending_limit = getattr(account, 'spending_limit', 0) or 0
-        total_daily_limit = max(0, total_daily_limit + spending_limit)
+        # Calculate discretionary money per day
+        discretionary_monthly = monthly_earnings - monthly_expenses_repeating - monthly_savings_goal
+        base_daily_limit = max(0, discretionary_monthly / 30)
         
-        return env.round_env(total_daily_limit, 2)
+        # Get today's non-repeating expenses
+        total_spent_today = calculate_total_money_spent_today(username, current_date)
+        
+        # Calculate remaining daily limit
+        remaining_limit = max(0, base_daily_limit - total_spent_today)
+        
+        return env.round_env(base_daily_limit, 2)
     except Exception as e:
         print(f"Error calculating daily limit for {username}: {str(e)}")
         return 0
@@ -144,12 +139,15 @@ def calculate_monthly_expenses_repeating(username):
     """Calculate total monthly repeating expenses for a given user."""
     session = SessionLocal()
     try:
-        total_expenses = session.query(Expense).filter(
-            (Expense.username == username) &
-            (Expense.repeating == True)
-        ).with_entities(func.sum(Expense.price)).scalar() or 0
+        repeating_expenses = session.query(Expense).filter(
+            Expense.username == username,
+            Expense.repeating == True
+        ).all()
         
-        return total_expenses
+        total_expenses = sum(expense.price for expense in repeating_expenses)
+        print(f"Debug - Repeating expenses: {[{'name': e.name, 'price': e.price} for e in repeating_expenses]}")
+        
+        return env.round_env(total_expenses, 2)
     except Exception as e:
         print(f"An error occurred while calculating repeating monthly expenses for {username}: {str(e)}")
         return 0
@@ -190,32 +188,34 @@ def calculate_total_money_spent_today(username, current_date=None):
     session = SessionLocal()
     try:
         if current_date is None:
-            current_date = datetime.now(timezone.utc)
+            current_date = get_local_date(datetime.now(timezone.utc))
+        else:
+            current_date = get_local_date(current_date)
         
-        # Get start and end of today
-        start_of_day = current_date.replace(hour=0, minute=0, second=0, microsecond=0)
-        end_of_day = start_of_day + timedelta(days=1)
+        # Get start and end of today in UTC for database queries
+        start_of_day = current_date.replace(tzinfo=timezone.utc)
+        end_of_day = (current_date + timedelta(days=1)).replace(tzinfo=timezone.utc)
         
         # Get today's non-repeating expenses
-        daily_non_repeating = session.query(Expense).filter(
+        non_repeating_expenses = session.query(Expense).filter(
             Expense.username == username,
             Expense.timestamp >= start_of_day,
             Expense.timestamp < end_of_day,
             Expense.repeating == False
-        ).with_entities(func.sum(Expense.price)).scalar() or 0
+        ).all()
         
         # Get daily portion of repeating expenses
-        monthly_repeating = session.query(Expense).filter(
+        repeating_expenses = session.query(Expense).filter(
             Expense.username == username,
             Expense.repeating == True
-        ).with_entities(func.sum(Expense.price)).scalar() or 0
+        ).all()
         
-        daily_portion_of_repeating = monthly_repeating / 30
+        # Calculate totals
+        non_repeating = sum(e.price for e in non_repeating_expenses)
+        daily_repeating = sum(e.price for e in repeating_expenses) / 30
         
-        # Sum both types of expenses
-        total_spent = daily_non_repeating + daily_portion_of_repeating
-        
-        return env.round_env(total_spent, 2)
+        total = env.round_env(non_repeating + daily_repeating, 2)
+        return total
     except Exception as e:
         print(f"Error calculating total money spent today for {username}: {str(e)}")
         return 0

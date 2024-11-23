@@ -13,12 +13,6 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Add input validation
-      if (!formData.username || !formData.password || !formData.email) {
-        setError('All fields are required');
-        return;
-      }
-
       const response = await fetch(`${process.env.REACT_APP_API_URL}/register`, {
         method: 'POST',
         headers: {
@@ -31,9 +25,7 @@ const Register = () => {
         navigate('/login');
       } else {
         const data = await response.json();
-        // Extract error messages and set them in the state
-        const errorMsg = data.detail || data.msg || JSON.stringify(data) || 'Registration failed';
-        setError(errorMsg);
+        setError(data.detail || 'Registration failed');
       }
     } catch (error) {
       setError('Network error occurred');
@@ -46,8 +38,8 @@ const Register = () => {
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
         <h2 className="text-2xl font-bold mb-6">Register</h2>
         {error && (
-          <div className="mb-4 text-red-500 text-sm">
-            {typeof error === 'string' ? error : error.map((err, index) => <div key={index}>{err.msg}</div>)}
+          <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
+            {error}
           </div>
         )}
         <form onSubmit={handleSubmit}>
