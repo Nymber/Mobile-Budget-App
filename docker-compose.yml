@@ -2,26 +2,38 @@ version: '3.8'
 
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    build: ./backend
+    restart: unless-stopped
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend/instance:/app/instance
     environment:
       - ENVIRONMENT=production
-      - DATABASE_URL=sqlite:///instance/financial_data.db
-    restart: always
+    volumes:
+      - backend_data:/app/instance
+    networks:
+      - app_network
+    mem_limit: 512M
+    mem_reservation: 256M
 
   frontend:
-    build:
+    build: 
       context: ./frontend
       dockerfile: Dockerfile
+    restart: unless-stopped
     ports:
       - "3000:3000"
-    depends_on:
-      - backend
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8000
-    restart: always
+    depends_on:
+      - backend
+    networks:
+      - app_network
+    mem_limit: 2G
+    mem_reservation: 1G
+
+volumes:
+  backend_data:
+
+networks:
+  app_network:
+    driver: bridge

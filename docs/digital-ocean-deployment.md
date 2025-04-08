@@ -36,6 +36,25 @@ systemctl enable docker
 systemctl start docker
 ```
 
+# Configure Docker memory limits (important to prevent build failures)
+```bash
+# Create or modify the Docker daemon configuration
+mkdir -p /etc/docker
+cat > /etc/docker/daemon.json <<EOF
+{
+  "memory-swap": -1,
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
+  }
+}
+EOF
+
+# Restart Docker to apply changes
+systemctl restart docker
+```
+
 ### 3. Deploy the Application
 
 Clone your repository:
@@ -48,7 +67,13 @@ cd Mobile-Budget-App
 Build and start the containers:
 
 ```bash
+# For systems with limited memory, you can use this to build one container at a time
+docker-compose build backend && docker-compose build frontend
 docker-compose up -d
+
+# Alternatively, use the --memory option to allocate more memory for the build
+# docker-compose build --memory=2g
+# docker-compose up -d
 ```
 
 ### 4. Configure Domain and SSL (Optional)
