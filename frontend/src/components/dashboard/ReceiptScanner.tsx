@@ -17,8 +17,20 @@ const ReceiptScanner: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [hasCamera, setHasCamera] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
+
+  // Clean up function to stop all tracks and free memory
+  const cleanupMediaStream = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  };
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -32,12 +44,11 @@ const ReceiptScanner: React.FC = () => {
     setIsMobile(isMobileDevice());
     setHasCamera(hasGetUserMedia());
 
+    // Clean up on component unmount
     return () => {
-      if (scanning) {
-        stopCamera();
-      }
+      cleanupMediaStream();
     };
-  }, [isAuthenticated, scanning, toast]);
+  }, [isAuthenticated, toast]);
 
   const handleCameraToggle = () => {
     if (scanning) {
@@ -49,24 +60,26 @@ const ReceiptScanner: React.FC = () => {
 
   const startCamera = async () => {
     try {
-      let stream;
+      // Clean up any existing stream first
+      cleanupMediaStream();
+      
       if (isMobile) {
         try {
-          stream = await navigator.mediaDevices.getUserMedia({
+          streamRef.current = await navigator.mediaDevices.getUserMedia({
             video: {
               facingMode: { ideal: 'environment' },
             },
           });
         } catch (mobileErr) {
           console.warn("Couldn't access rear camera, falling back to default:", mobileErr);
-          stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          streamRef.current = await navigator.mediaDevices.getUserMedia({ video: true });
         }
       } else {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        streamRef.current = await navigator.mediaDevices.getUserMedia({ video: true });
       }
 
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
+      if (videoRef.current && streamRef.current) {
+        videoRef.current.srcObject = streamRef.current;
         setScanning(true);
       }
     } catch (err) {
@@ -80,12 +93,8 @@ const ReceiptScanner: React.FC = () => {
   };
 
   const stopCamera = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
-      tracks.forEach((track: MediaStreamTrack) => track.stop());
-      videoRef.current.srcObject = null;
-      setScanning(false);
-    }
+    cleanupMediaStream();
+    setScanning(false);
   };
 
   return (
