@@ -3,18 +3,10 @@ export interface APIResponse<T> {
   error?: string; // Ensure error is a string or undefined
 }
 
-// Use window.location.hostname to dynamically determine the API host for development
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || (() => {
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    return `http://${hostname}:8000`;
-  }
-  return 'http://localhost:8000';
-})();
+import { API_URL } from './apiUtils';
 
-// Get the API URL once
-const API_URL = API_BASE_URL;
-console.log('API URL configured as:', API_URL);
+// Log the API URL for debugging
+console.log('API URL in api.ts (imported from apiUtils):', API_URL);
 
 export async function fetchFromAPI<T>(
   endpoint: string,

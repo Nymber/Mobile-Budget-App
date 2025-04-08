@@ -23,7 +23,7 @@ async def lifespan(app: FastAPI):
         static_dir = NEXT_BUILD_DIR / "static"
         if static_dir.exists():
             app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
-            print(f"Mounted Next.js static files from: {static_dir}")
+            print(f"\033[92mMounted Next.js static files from: {static_dir}\033[0m")
         else:
             print(f"Warning: Next.js static directory does not exist at {static_dir}")
     
@@ -36,7 +36,7 @@ async def lifespan(app: FastAPI):
     # Mount public directory for other static assets
     if PUBLIC_DIR.exists():
         app.mount("/public", StaticFiles(directory=str(PUBLIC_DIR)), name="public")
-        print(f"Mounted public files from: {PUBLIC_DIR}")
+        print(f"\033[92mMounted public files from: {PUBLIC_DIR}\033[0m")
     
     yield  # Yield control back to FastAPI
     

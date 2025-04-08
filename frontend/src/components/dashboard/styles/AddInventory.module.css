@@ -1,0 +1,120 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--foreground);
+}
+
+.formContainer {
+  background-color: var(--card);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.input {
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  transition: border-color 0.15s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.helperText {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  margin-top: 0.25rem;
+}
+
+.submitButton {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.submitButton:hover {
+  background-color: var(--primary-dark);
+}
+
+.submitButton:disabled {
+  background-color: var(--muted);
+  cursor: not-allowed;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.success {
+  background-color: var(--success-light, rgba(0, 200, 83, 0.1));
+  color: var(--success, rgb(0, 150, 60));
+  border: 1px solid var(--success-border, rgba(0, 150, 60, 0.2));
+}
+
+.error {
+  background-color: var(--destructive-light, rgba(255, 59, 48, 0.1));
+  color: var(--destructive, rgb(230, 41, 41));
+  border: 1px solid var(--destructive-border, rgba(230, 41, 41, 0.2));
+}
+
+.statusIcon {
+  margin-right: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.successIcon {
+  color: var(--success);
+}
+
+.errorIcon {
+  color: var(--destructive);
+}
+
+.statusMessage {
+  flex: 1;
+}

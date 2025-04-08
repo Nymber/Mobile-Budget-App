@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Trash2, Edit } from "lucide-react";
 import { format } from 'date-fns';
 import { updateEarning, deleteEarning, getEarnings, Earning } from '@/services/api';
+import styles from './View_Earnings.module.css';
 
 const ViewEarnings: React.FC = () => {
   const [earnings, setEarnings] = useState<Earning[]>([]);
@@ -158,22 +159,24 @@ const ViewEarnings: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className={styles.container}>
       {/* Show action messages */}
       {actionMessage && (
-        <div className={`p-4 mb-4 rounded ${
-          actionMessage.type === 'success' 
-            ? 'bg-green-50 text-green-700 border border-green-200' 
-            : 'bg-red-50 text-red-700 border border-red-200'
-        }`}>
+        <div
+          className={`${styles.actionMessage} ${
+            actionMessage.type === 'success'
+              ? styles.actionMessageSuccess
+              : styles.actionMessageError
+          }`}
+        >
           {actionMessage.text}
         </div>
       )}
       
       {/* Edit form */}
       {isEditing && selectedEarning && (
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h2 className="text-lg font-medium mb-4">Edit Earning</h2>
+        <div className={styles.editFormContainer}>
+          <h2 className={styles.editFormTitle}>Edit Earning</h2>
           
           <div className="space-y-4">
             <div>
@@ -259,37 +262,37 @@ const ViewEarnings: React.FC = () => {
           No earnings found. Add your first earning to get started!
         </div>
       ) : (
-        <Table>
+        <Table className={styles.table}>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Source</TableHead>
-              <TableHead className="text-right">Salary</TableHead>
-              <TableHead className="text-right">Cash Tips</TableHead>
-              <TableHead className="text-right">Hours</TableHead>
-              <TableHead className="text-right">Hourly Rate</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className={styles.tableHeader}>Date</TableHead>
+              <TableHead className={styles.tableHeader}>Source</TableHead>
+              <TableHead className={`${styles.tableHeader} text-right`}>Salary</TableHead>
+              <TableHead className={`${styles.tableHeader} text-right`}>Cash Tips</TableHead>
+              <TableHead className={`${styles.tableHeader} text-right`}>Hours</TableHead>
+              <TableHead className={`${styles.tableHeader} text-right`}>Hourly Rate</TableHead>
+              <TableHead className={styles.tableHeader}>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {Array.isArray(earnings) ? earnings.map((earning) => (
-              <TableRow key={earning.id}>
-                <TableCell>{formatDate(earning.timestamp)}</TableCell>
-                <TableCell>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+              <TableRow key={earning.id} className={styles.tableRow}>
+                <TableCell className={styles.tableCell}>{formatDate(earning.timestamp)}</TableCell>
+                <TableCell className={styles.tableCell}>
+                  <span className={`${styles.statusBadge} ${
                     earning.hourly_rate > 0 
-                      ? 'bg-blue-100 text-blue-800' 
-                      : 'bg-gray-100 text-gray-800'
+                      ? styles.statusBadgeHourly 
+                      : styles.statusBadgeOther
                   }`}>
                     {earning.hourly_rate > 0 ? 'Hourly Work' : 'Other'}
                   </span>
                 </TableCell>
-                <TableCell className="text-right">${earning.salary.toFixed(2)}</TableCell>
-                <TableCell className="text-right">${earning.cash_tips.toFixed(2)}</TableCell>
-                <TableCell className="text-right">{earning.hours}</TableCell>
-                <TableCell className="text-right">${earning.hourly_rate.toFixed(2)}</TableCell>
-                <TableCell>
-                  <div className="flex space-x-1">
+                <TableCell className={`${styles.tableCell} text-right`}>${earning.salary.toFixed(2)}</TableCell>
+                <TableCell className={`${styles.tableCell} text-right`}>${earning.cash_tips.toFixed(2)}</TableCell>
+                <TableCell className={`${styles.tableCell} text-right`}>{earning.hours}</TableCell>
+                <TableCell className={`${styles.tableCell} text-right`}>${earning.hourly_rate.toFixed(2)}</TableCell>
+                <TableCell className={styles.tableCell}>
+                  <div className={styles.buttonGroup}>
                     <Button 
                       variant="ghost" 
                       size="icon"

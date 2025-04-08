@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Trash2, Edit, CheckSquare, Square } from "lucide-react";
 import { format } from 'date-fns';
 import { deleteExpense, getExpenses, updateExpense, Expense } from '@/services/api';
+import styles from './View_Expenses.module.css';
 
 const ViewExpenses: React.FC = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -154,22 +155,24 @@ const ViewExpenses: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className={styles.container}>
       {/* Show action messages */}
       {actionMessage && (
-        <div className={`p-4 mb-4 rounded ${
-          actionMessage.type === 'success' 
-            ? 'bg-green-50 text-green-700 border border-green-200' 
-            : 'bg-red-50 text-red-700 border border-red-200'
-        }`}>
+        <div
+          className={`${styles.actionMessage} ${
+            actionMessage.type === 'success'
+              ? styles.actionMessageSuccess
+              : styles.actionMessageError
+          }`}
+        >
           {actionMessage.text}
         </div>
       )}
       
       {/* Edit form */}
       {isEditing && selectedExpense && (
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h2 className="text-lg font-medium mb-4">Edit Expense</h2>
+        <div className={styles.editFormContainer}>
+          <h2 className={styles.editFormTitle}>Edit Expense</h2>
           
           <div className="space-y-4">
             <div>
@@ -237,21 +240,21 @@ const ViewExpenses: React.FC = () => {
           No expenses found. Add your first expense to get started!
         </div>
       ) : (
-        <Table>
+        <Table className={styles.table}>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[50px]">Select</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className={styles.tableHeader}>Select</TableHead>
+              <TableHead className={styles.tableHeader}>Date</TableHead>
+              <TableHead className={styles.tableHeader}>Name</TableHead>
+              <TableHead className={`${styles.tableHeader} text-right`}>Amount</TableHead>
+              <TableHead className={styles.tableHeader}>Type</TableHead>
+              <TableHead className={styles.tableHeader}>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {Array.isArray(expenses) ? expenses.map((expense) => (
-              <TableRow key={expense.id}>
-                <TableCell>
+              <TableRow key={expense.id} className={styles.tableRow}>
+                <TableCell className={styles.tableCell}>
                   <Button 
                     variant="ghost" 
                     size="icon"
@@ -262,20 +265,20 @@ const ViewExpenses: React.FC = () => {
                       : <Square className="h-4 w-4" />}
                   </Button>
                 </TableCell>
-                <TableCell>{formatDate(expense.timestamp)}</TableCell>
-                <TableCell>{expense.name}</TableCell>
-                <TableCell className="text-right">${expense.price.toFixed(2)}</TableCell>
-                <TableCell>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                <TableCell className={styles.tableCell}>{formatDate(expense.timestamp)}</TableCell>
+                <TableCell className={styles.tableCell}>{expense.name}</TableCell>
+                <TableCell className={`${styles.tableCell} text-right`}>${expense.price.toFixed(2)}</TableCell>
+                <TableCell className={styles.tableCell}>
+                  <span className={`${styles.statusBadge} ${
                     expense.repeating 
-                      ? 'bg-blue-100 text-blue-800' 
-                      : 'bg-gray-100 text-gray-800'
+                      ? styles.statusBadgeRecurring 
+                      : styles.statusBadgeOneTime
                   }`}>
                     {expense.repeating ? 'Recurring' : 'One-time'}
                   </span>
                 </TableCell>
-                <TableCell>
-                  <div className="flex space-x-1">
+                <TableCell className={styles.tableCell}>
+                  <div className={styles.buttonGroup}>
                     <Button 
                       variant="ghost" 
                       size="icon"

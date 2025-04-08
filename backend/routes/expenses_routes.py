@@ -32,7 +32,7 @@ class ExpenseResponse(BaseModel):
     timestamp: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Expense Routes
 @router.post("/expenses", response_model=ExpenseResponse)

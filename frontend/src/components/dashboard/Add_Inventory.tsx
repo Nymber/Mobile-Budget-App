@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createInventoryItem } from '@/services/api';
 import { AlertCircle, CheckCircle } from 'lucide-react';
+import styles from './styles/AddInventory.module.css';
 
 const Inventory: React.FC = () => {
   const [newItem, setNewItem] = useState({
@@ -52,76 +53,70 @@ const Inventory: React.FC = () => {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Manage Inventory</h1>
-      <div className="bg-white shadow rounded-lg p-6">
+    <div className={styles.container}>
+      <h1 className={styles.title}>Manage Inventory</h1>
+      <div className={styles.formContainer}>
         {status.type && (
-          <div className={`mb-4 p-4 rounded-md ${status.type === 'success' ? 'bg-green-50' : 'bg-red-50'}`}>
-            <div className="flex">
-              <div className="flex-shrink-0">
-                {status.type === 'success' ? (
-                  <CheckCircle className="h-5 w-5 text-green-400" />
-                ) : (
-                  <AlertCircle className="h-5 w-5 text-red-400" />
-                )}
-              </div>
-              <div className="ml-3">
-                <p className={`text-sm font-medium ${status.type === 'success' ? 'text-green-800' : 'text-red-800'}`}>
-                  {status.message}
-                </p>
-              </div>
+          <div className={`${styles.status} ${status.type === 'success' ? styles.success : styles.error}`}>
+            <div className={styles.statusIcon}>
+              {status.type === 'success' ? (
+                <CheckCircle className={styles.successIcon} />
+              ) : (
+                <AlertCircle className={styles.errorIcon} />
+              )}
             </div>
+            <div className={styles.statusMessage}>{status.message}</div>
           </div>
         )}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Item Name</label>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.inputGroup}>
+            <label htmlFor="name" className={styles.label}>Item Name</label>
             <input
               type="text"
               id="name"
               value={newItem.name}
               onChange={(e) => setNewItem({...newItem, name: e.target.value})}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className={styles.input}
               required
               disabled={submitting}
             />
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div>
-              <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Quantity</label>
+          <div className={styles.grid}>
+            <div className={styles.inputGroup}>
+              <label htmlFor="quantity" className={styles.label}>Quantity</label>
               <input
                 type="number"
                 id="quantity"
                 value={newItem.quantity}
                 onChange={(e) => setNewItem({...newItem, quantity: parseInt(e.target.value) || 0})}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className={styles.input}
                 min="0"
                 required
                 disabled={submitting}
               />
             </div>
-            <div>
-              <label htmlFor="minQuantity" className="block text-sm font-medium text-gray-700">Min Quantity</label>
+            <div className={styles.inputGroup}>
+              <label htmlFor="minQuantity" className={styles.label}>Min Quantity</label>
               <input
                 type="number"
                 id="minQuantity"
                 value={newItem.minQuantity}
                 onChange={(e) => setNewItem({...newItem, minQuantity: parseInt(e.target.value) || 0})}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className={styles.input}
                 min="0"
                 required
                 disabled={submitting}
               />
-              <p className="mt-1 text-xs text-gray-500">Note: Min quantity is used for low stock alerts only</p>
+              <p className={styles.helperText}>Note: Min quantity is used for low stock alerts only</p>
             </div>
-            <div>
-              <label htmlFor="price" className="block text-sm font-medium text-gray-700">Price</label>
+            <div className={styles.inputGroup}>
+              <label htmlFor="price" className={styles.label}>Price</label>
               <input
                 type="number"
                 id="price"
                 value={newItem.price}
                 onChange={(e) => setNewItem({...newItem, price: parseFloat(e.target.value) || 0})}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className={styles.input}
                 min="0"
                 step="0.01"
                 required
@@ -131,7 +126,7 @@ const Inventory: React.FC = () => {
           </div>
           <button
             type="submit"
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+            className={styles.submitButton}
             disabled={submitting}
           >
             {submitting ? 'Adding...' : 'Add Item'}

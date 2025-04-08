@@ -100,15 +100,6 @@ const FinancialDashboard: React.FC = () => {
     }).format(value);
   };
 
-  // Get semantic colors from CSS variables
-  const getScoreColor = (score: number): string => {
-    if (score > 20) return 'var(--success, hsl(142 72% 42%))';
-    if (score > 0) return 'var(--success, hsl(142 72% 42%))';
-    if (score === 0) return 'var(--muted-foreground, hsl(215 35% 45%))';
-    if (score > -20) return 'var(--warning, hsl(38 92% 50%))';
-    return 'var(--destructive, hsl(358 75% 50%))';
-  };
-
   // Prepare chart data using real data
   const prepareChartData = (): FinancialDatum[] => {
     if (!chartData || !chartData.datasets || !chartData.labels) return [];
@@ -184,9 +175,9 @@ const FinancialDashboard: React.FC = () => {
     <div className={styles.dashboardContainer}>
       <div className={styles.dashboardHeader}>
         <h1>Financial Dashboard</h1>
-        <div className={styles.scoreCard} style={{ borderColor: getScoreColor(dailyScore) }}>
+        <div className={`${styles.scoreCard} ${styles.scoreCardBorder}`}>
           <div className={styles.scoreHeader}>Today&apos;s Balance</div>
-          <div className={styles.scoreValue} style={{ color: getScoreColor(dailyScore) }}>
+          <div className={styles.scoreValue}>
             {formatCurrency(dailyScore)}
           </div>
         </div>
@@ -206,7 +197,7 @@ const FinancialDashboard: React.FC = () => {
           <div className={styles.chartContainer}>
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={financialData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <CartesianGrid strokeDasharray="3 3" className={styles.cartesianGrid} />
                 <XAxis 
                   dataKey="date" 
                   tick={{ fontSize: 12 }} 
@@ -259,7 +250,7 @@ const FinancialDashboard: React.FC = () => {
           <div className={styles.chartContainer}>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={financialData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <CartesianGrid strokeDasharray="3 3" className={styles.cartesianGrid} />
                 <XAxis 
                   dataKey="date" 
                   tick={{ fontSize: 12 }} 
@@ -307,7 +298,7 @@ const FinancialDashboard: React.FC = () => {
                 data={budgetCategories}
                 margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <CartesianGrid strokeDasharray="3 3" className={styles.cartesianGrid} />
                 <XAxis 
                   dataKey="category" 
                   tick={{ fontSize: 12 }} 
@@ -355,15 +346,12 @@ const FinancialDashboard: React.FC = () => {
               </div>
               <div className={styles.progressBarContainer}>
                 <div 
-                  className={`${styles.progressBar}`}
-                  style={{ 
-                    width: `${Math.min(100, category.percentage)}%`,
-                    backgroundColor: category.percentage > 100 
-                      ? 'var(--destructive)' 
-                      : category.percentage > 80 
-                        ? 'var(--warning)' 
-                        : 'var(--success)'
-                  }}
+                  className={`${styles.progressBar} ${category.percentage > 100 
+                    ? styles.progressBarDestructive 
+                    : category.percentage > 80 
+                      ? styles.progressBarWarning 
+                      : styles.progressBarSuccess}`}
+                  style={{ width: `${Math.min(100, category.percentage)}%` }}
                 />
               </div>
               <div className={styles.progressFooter}>

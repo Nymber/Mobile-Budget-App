@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from './services/AuthContext';
+import { useAuth } from '@/components/auth/AuthProvider';
 import jwt from 'jsonwebtoken';
 
 interface JwtPayload {
@@ -15,20 +15,19 @@ interface JwtPayload {
 
 // Import components directly instead of using lazy loading for simplicity
 // This resolves TypeScript errors while we transition to Next.js App Router
-import Dashboard from './components/dashboard/dashboard';
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
-import ViewEarnings from './components/dashboard/View_Earnings'; // Ensure the file './components/ViewEarnings.tsx' exists and is correctly named
-import ViewExpenses from './components/dashboard/View_Expenses';
-import ViewInventory from './components/dashboard/View_Inventory';
-import DownloadExcel from './components/dashboard/Download_Excel';
-import Inventory from './components/dashboard/Add_Inventory';
-import AddExpense from './components/dashboard/AddExpense';
-import AddEarning from './components/dashboard/AddEarning';
-import ReceiptScanner from './components/dashboard/ReceiptScanner';
-import FinancialDashboard from './components/dashboard/FinancialDashboard';
-import AddTasks from './components/dashboard/AddTasks';
-import ViewTasks from './components/dashboard/View_Tasks';
+import Dashboard from '../components/dashboard/dashboard';
+import Register from '../components/auth/Register';
+import ViewEarnings from '../components/dashboard/View_Earnings';
+import ViewExpenses from '../components/dashboard/View_Expenses';
+import ViewInventory from '../components/dashboard/View_Inventory';
+import DownloadExcel from '../components/dashboard/Download_Excel';
+import Inventory from '../components/dashboard/Add_Inventory';
+import AddExpense from '../components/dashboard/AddExpense';
+import AddEarning from '../components/dashboard/AddEarning';
+import ReceiptScanner from '../components/dashboard/ReceiptScanner';
+import FinancialDashboard from '../components/dashboard/FinancialDashboard';
+import AddTasks from '../components/dashboard/AddTasks';
+import ViewTasks from '../components/dashboard/View_Tasks';
 
 // Enhanced implementation of ProtectedRoute with token validation
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -111,10 +110,6 @@ const router = [
   {
     path: "/",
     element: <ProtectedRoute><Dashboard /></ProtectedRoute>
-  },
-  {
-    path: "/login",
-    element: <Login />
   },
   {
     path: "/register",

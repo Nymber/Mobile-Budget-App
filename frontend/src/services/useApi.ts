@@ -1,5 +1,5 @@
-import { apiGet, apiPost, apiPut, apiDelete } from '@/services/apiUtils';
-import { useAuth } from './AuthContext';
+import ky from 'ky';
+import { useAuth } from '@/components/auth/AuthProvider';
 
 export interface ApiResponse<T> {
   data?: T;
@@ -21,7 +21,7 @@ export const useApi = () => {
       throw new Error('No token available');
     }
 
-    return await apiGet<T>(endpoint, { headers: { Authorization: `Bearer ${token}` } });
+    return await ky.get(endpoint, { headers: { Authorization: `Bearer ${token}` } }).json<ApiResponse<T>>();
   };
 
   const post = async <T>(endpoint: string, body: Record<string, unknown>): Promise<ApiResponse<T>> => {
@@ -35,7 +35,7 @@ export const useApi = () => {
       throw new Error('No token available');
     }
 
-    return await apiPost<T>(endpoint, body, { headers: { Authorization: `Bearer ${token}` } });
+    return await ky.post(endpoint, { json: body, headers: { Authorization: `Bearer ${token}` } }).json<ApiResponse<T>>();
   };
 
   const put = async <T>(endpoint: string, body: Record<string, unknown>): Promise<ApiResponse<T>> => {
@@ -49,7 +49,7 @@ export const useApi = () => {
       throw new Error('No token available');
     }
 
-    return await apiPut<T>(endpoint, body, { headers: { Authorization: `Bearer ${token}` } });
+    return await ky.put(endpoint, { json: body, headers: { Authorization: `Bearer ${token}` } }).json<ApiResponse<T>>();
   };
 
   const del = async <T>(endpoint: string): Promise<ApiResponse<T>> => {
@@ -63,7 +63,7 @@ export const useApi = () => {
       throw new Error('No token available');
     }
 
-    return await apiDelete<T>(endpoint, { headers: { Authorization: `Bearer ${token}` } });
+    return await ky.delete(endpoint, { headers: { Authorization: `Bearer ${token}` } }).json<ApiResponse<T>>();
   };
 
   return {

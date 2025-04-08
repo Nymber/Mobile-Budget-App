@@ -92,9 +92,9 @@ const DailyFinancialOverview: React.FC = () => {
   };
 
   // Determine color class for score - using CSS variables for semantic colors
-  const getScoreColorClass = (score: number): string => {
-      return styles.scoreValue; // We'll keep the class but override color with inline style
-    };
+  const getScoreColorClass = (): string => {
+    return styles.scoreValue; // We'll keep the class but override color with inline style
+  };
   
   // Get semantic color value based on score
   const getScoreColor = (score: number): string => {
@@ -187,7 +187,7 @@ const DailyFinancialOverview: React.FC = () => {
       </div>
       
       <div className={styles.scoreSection}>
-        <div className={getScoreColorClass(dailyScore)} style={{ color: getScoreColor(dailyScore) }}>
+        <div className={getScoreColorClass()} style={{ color: getScoreColor(dailyScore) }}>
           {formatCurrency(dailyScore)}
         </div>
         <div>
@@ -209,38 +209,36 @@ const DailyFinancialOverview: React.FC = () => {
       <div className={styles.breakdown}>
         <div className={styles.category}>
           <div className={styles.categoryLabel}>Today&apos;s Earnings</div>
-          <div className={styles.categoryValue} style={{ color: 'var(--success)' }}>
+          <div className={`${styles.categoryValue} ${styles.success}`}>
             {formatCurrency(dailyEarnings)}
           </div>
           <div className={styles.progressBar}>
             <div 
               className={styles.progress} 
               style={{ 
-                width: `${calculatePercentage(dailyEarnings, maxValue)}%`,
-                backgroundColor: 'var(--success)' 
+                width: `${calculatePercentage(dailyEarnings, maxValue)}%`
               }}
             />
           </div>
-          <div className={styles.categoryLabel} style={{ marginTop: '0.5rem', fontSize: '0.75rem' }}>
+          <div className={`${styles.categoryLabel} ${styles.subLabel}`}>
             From monthly earnings of {formatCurrency(monthlyEarnings)}
           </div>
         </div>
         
         <div className={styles.category}>
           <div className={styles.categoryLabel}>Today&apos;s Expenses</div>
-          <div className={styles.categoryValue} style={{ color: 'var(--destructive)' }}>
+          <div className={`${styles.categoryValue} ${styles.destructive}`}>
             {formatCurrency(totalMoneySpentToday)}
           </div>
           <div className={styles.progressBar}>
             <div 
               className={styles.progress}
               style={{ 
-                width: `${calculatePercentage(totalMoneySpentToday, maxValue)}%`,
-                backgroundColor: 'var(--destructive)' 
+                width: `${calculatePercentage(totalMoneySpentToday, maxValue)}%`
               }}
             />
           </div>
-          <div className={styles.categoryLabel} style={{ marginTop: '0.5rem', fontSize: '0.75rem' }}>
+          <div className={`${styles.categoryLabel} ${styles.subLabel}`}>
             Daily limit: {formatCurrency(dailyLimit)}
           </div>
         </div>
@@ -250,19 +248,17 @@ const DailyFinancialOverview: React.FC = () => {
       <div className={styles.breakdown} style={{ marginTop: '1rem' }}>
         <div className={styles.category}>
           <div className={styles.categoryLabel}>Monthly Savings Goal</div>
-          <div className={styles.categoryValue} style={{ color: 'var(--primary)' }}>
+          <div className={`${styles.categoryValue} ${styles.primary}`}>
             {formatCurrency(monthlySavingsGoal)}
           </div>
         </div>
         
         <div className={styles.category}>
           <div className={styles.categoryLabel}>Savings Forecast</div>
-          <div className={styles.categoryValue} style={{ 
-            color: savingsForecast >= 0 ? 'var(--success)' : 'var(--destructive)'
-          }}>
+          <div className={`${styles.categoryValue} ${savingsForecast >= 0 ? styles.success : styles.destructive}`}>
             {formatCurrency(savingsForecast)}
           </div>
-          <div className={styles.categoryLabel} style={{ marginTop: '0.25rem', fontSize: '0.75rem' }}>
+          <div className={`${styles.categoryLabel} ${styles.subLabel}`}>
             Savings rate: {formatPercentage(savingsRate)}%
           </div>
         </div>

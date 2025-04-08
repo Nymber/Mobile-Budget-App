@@ -3,8 +3,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Loader2, Trash2, Edit, CheckCircle, XCircle } from "lucide-react";
 import { useAuth } from '@/components/auth/AuthProvider';
-import { apiPost, apiPut, apiDelete } from '@/services/apiUtils';
-const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+import { apiPost, apiPut, apiDelete, apiGet } from '@/services/apiUtils';
+import styles from './View_Tasks.module.css';
 
 interface Task {
   id: number;
@@ -38,18 +38,7 @@ const ViewTasks: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${NEXT_PUBLIC_API_URL}/tasks`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch tasks');
-      }
-
-      const tasksData = await response.json();
+      const tasksData = await apiGet<Task[]>('/tasks');
       setTasks(Array.isArray(tasksData) ? tasksData : []);
     } catch (err) {
       console.error('Error fetching tasks:', err);
@@ -167,23 +156,27 @@ const ViewTasks: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className={styles.container}>
       {actionMessage && (
-        <div className={`p-4 mb-4 rounded ${
-          actionMessage.type === 'success'
-            ? 'bg-green-50 text-green-700 border border-green-200'
-            : 'bg-red-50 text-red-700 border border-red-200'
-        }`}>
+        <div
+          className={`${styles.actionMessage} ${
+            actionMessage.type === 'success'
+              ? styles.actionMessageSuccess
+              : styles.actionMessageError
+          }`}
+        >
           {actionMessage.text}
         </div>
       )}
 
       {isEditing && selectedTask && (
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h2 className="text-lg font-medium mb-4">Edit Task</h2>
+        <div className={styles.editTaskContainer}>
+          <h2 className={styles.editTaskTitle}>Edit Task</h2>
           <div className="space-y-4">
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
+              <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                Title
+              </label>
               <input
                 type="text"
                 id="title"
@@ -208,7 +201,7 @@ const ViewTasks: React.FC = () => {
               </label>
             </div>
             <div className="flex space-x-2 pt-2">
-              <Button onClick={handleSaveEdit} className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={handleSaveEdit} className="bg-blue-600 hover:bg-blue-700 text-white">
                 Save
               </Button>
               <Button onClick={() => setIsEditing(false)} variant="outline">
@@ -220,66 +213,70 @@ const ViewTasks: React.FC = () => {
       )}
 
       {tasks.length === 0 ? (
-        <div className="text-center p-8 text-muted-foreground">
+        <div className="text-center p-8 text-gray-500">
           No tasks found. Add your first task to get started!
         </div>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Repeat Daily</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {tasks.map(task => (
-              <TableRow key={task.id}>
-                <TableCell>{task.title}</TableCell>
-                <TableCell>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    task.is_complete
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {task.is_complete ? 'Completed' : 'Pending'}
-                  </span>
-                </TableCell>
-                <TableCell>{task.repeat_daily ? 'Yes' : 'No'}</TableCell>
-                <TableCell>
-                  <div className="flex space-x-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleSelectTask(task)}
-                    >
-                      <Edit className="h-4 w-4 text-blue-500" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleToggleComplete(task.id)}
-                    >
-                      {task.is_complete ? (
-                        <XCircle className="h-4 w-4 text-red-500" />
-                      ) : (
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                      )}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDeleteTask(task.id)}
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </div>
-                </TableCell>
+        <div className="overflow-x-auto">
+          <Table className={styles.table}>
+            <TableHeader>
+              <TableRow>
+                <TableHead className={styles.tableHeader}>Title</TableHead>
+                <TableHead className={styles.tableHeader}>Status</TableHead>
+                <TableHead className={styles.tableHeader}>Repeat Daily</TableHead>
+                <TableHead className={styles.tableHeader}>Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {tasks.map((task) => (
+                <TableRow key={task.id} className={styles.tableRow}>
+                  <TableCell className={styles.tableCell}>{task.title}</TableCell>
+                  <TableCell className={styles.tableCell}>
+                    <span
+                      className={`${styles.statusBadge} ${
+                        task.is_complete
+                          ? styles.statusBadgeCompleted
+                          : styles.statusBadgePending
+                      }`}
+                    >
+                      {task.is_complete ? 'Completed' : 'Pending'}
+                    </span>
+                  </TableCell>
+                  <TableCell className={styles.tableCell}>{task.repeat_daily ? 'Yes' : 'No'}</TableCell>
+                  <TableCell className={styles.tableCell}>
+                    <div className={styles.buttonGroup}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleSelectTask(task)}
+                      >
+                        <Edit className="h-4 w-4 text-blue-500" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleToggleComplete(task.id)}
+                      >
+                        {task.is_complete ? (
+                          <XCircle className="h-4 w-4 text-red-500" />
+                        ) : (
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDeleteTask(task.id)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       )}
     </div>
   );

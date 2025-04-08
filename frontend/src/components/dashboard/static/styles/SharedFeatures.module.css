@@ -1,0 +1,34 @@
+/* Placeholder styles for SharedFeatures */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.featureItem {
+  border: 1px solid #ccc;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.featureTitle {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.featureDescription {
+  font-size: 14px;
+  color: #666;
+}

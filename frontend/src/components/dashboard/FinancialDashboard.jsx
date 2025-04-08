@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { authAxios, isAuthenticated, validateToken } from '../../../services/authService';
 import { useRouter } from 'next/router';
+import styles from './styles/FinancialDashboard.module.css';
 
 const FinancialDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -80,51 +81,44 @@ const FinancialDashboard = () => {
   }
 
   return (
-    <div className="financial-dashboard">
-      <h2>Financial Dashboard</h2>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Financial Dashboard</h1>
       
       {/* Daily Score Section */}
-      <div className="dashboard-section">
+      <div className={styles.overview}>
         <h3>Daily Score</h3>
-        <div className="score-card">
-          ${dashboardData.dailyScore.toFixed(2)}
+        <div className={styles.dataCard}>
+          <h2 className={styles.dataTitle}>Daily Score</h2>
+          <p className={styles.dataValue}>${dashboardData.dailyScore.toFixed(2)}</p>
         </div>
       </div>
       
       {/* Financial Data Section */}
-      <div className="dashboard-section">
+      <div className={styles.overview}>
         <h3>Financial Timeline</h3>
-        <div className="timeline">
-          {dashboardData.financialData.map((data, index) => (
-            <div key={index} className="timeline-item">
-              <div className="date">{data.date}</div>
-              <div className={`amount ${data.balance >= 0 ? 'positive' : 'negative'}`}>
+        {dashboardData.financialData.map((data, index) => (
+          <div key={index} className={styles.dataCard}>
+            <h2 className={styles.dataTitle}>{data.date}</h2>
+            <p className={styles.dataValue}>
+              <span className={data.balance >= 0 ? styles.positive : styles.negative}>
                 ${data.balance.toFixed(2)}
-              </div>
-            </div>
-          ))}
-        </div>
+              </span>
+            </p>
+          </div>
+        ))}
       </div>
       
       {/* Budget Categories Section */}
-      <div className="dashboard-section">
+      <div className={styles.overview}>
         <h3>Budget Categories</h3>
         {dashboardData.budgetCategories.map((category, index) => (
-          <div key={index} className="category-card">
-            <div className="category-header">
-              <h4>{category.category}</h4>
-              <span className="category-percentage">{category.percentage.toFixed(0)}%</span>
-            </div>
-            <div className="progress-bar">
-              <div 
-                className="progress" 
-                style={{ width: `${Math.min(category.percentage, 100)}%` }}
-              />
-            </div>
-            <div className="category-amounts">
+          <div key={index} className={styles.dataCard}>
+            <h2 className={styles.dataTitle}>{category.category}</h2>
+            <p className={styles.dataValue}>
+              <span>{category.percentage.toFixed(0)}%</span>
               <span>${category.spent.toFixed(2)} spent</span>
               <span>${category.remaining.toFixed(2)} remaining</span>
-            </div>
+            </p>
           </div>
         ))}
       </div>

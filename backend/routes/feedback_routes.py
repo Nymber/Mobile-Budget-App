@@ -25,7 +25,7 @@ class FeedbackResponse(BaseModel):
     timestamp: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 @router.post("/api/feedback", response_model=FeedbackResponse)
 async def submit_feedback(

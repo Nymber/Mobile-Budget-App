@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/services/use-toast';
+import styles from './styles/AddExpense.module.css';
 
 // Debug function to show token information
 const debugToken = () => {
@@ -128,26 +129,26 @@ const AddExpense = () => {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle>Add New Expense</CardTitle>
-        <CardDescription>Record a new expense in your budget</CardDescription>
+    <Card className={styles.card}>
+      <CardHeader className={styles.cardHeader}>
+        <CardTitle className={styles.cardTitle}>Add New Expense</CardTitle>
+        <CardDescription className={styles.cardDescription}>Record a new expense in your budget</CardDescription>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Expense Name</Label>
+      <CardContent className={styles.cardContent}>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.inputGroup}>
+            <Label htmlFor="name" className={styles.label}>Expense Name</Label>
             <Input 
               id="name" 
               value={name} 
               onChange={(e) => setName(e.target.value)} 
               placeholder="e.g., Groceries"
               required
+              className={styles.input}
             />
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="price">Amount ($)</Label>
+          <div className={styles.inputGroup}>
+            <Label htmlFor="price" className={styles.label}>Amount ($)</Label>
             <Input 
               id="price" 
               type="number" 
@@ -156,22 +157,21 @@ const AddExpense = () => {
               onChange={(e) => setPrice(e.target.value)} 
               placeholder="0.00"
               required
+              className={styles.input}
             />
           </div>
-          
-          <div className="flex items-center space-x-2">
+          <div className={styles.checkboxGroup}>
             <input
               type="checkbox"
               id="repeating"
+              title="This is a recurring expense"
               checked={repeating}
               onChange={(e) => setRepeating(e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-              title="Mark as recurring expense"
+              className={styles.checkbox}
             />
-            <Label htmlFor="repeating" className="cursor-pointer">This is a recurring expense</Label>
+            <Label htmlFor="repeating" className={styles.checkboxLabel}>This is a recurring expense</Label>
           </div>
-          
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className={styles.submitButton} disabled={loading}>
             {loading ? 'Adding...' : 'Add Expense'}
           </Button>
         </form>

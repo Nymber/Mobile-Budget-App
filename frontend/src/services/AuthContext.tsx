@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import jwt from 'jsonwebtoken';
+import { API_URL } from './apiUtils';
 
 interface User {
   id?: string | number;
@@ -36,7 +37,8 @@ interface LoginPayload {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://76.121.92.139:8000';
+// Using the API_URL from apiUtils.ts for consistency
+console.log('Using API_URL in AuthContext:', API_URL);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -135,7 +137,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
 
       // Make request to refresh token
-      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+      const response = await fetch(`${API_URL}/auth/refresh`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -183,7 +185,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
 
       // Validate token with backend
-      const response = await fetch(`${API_BASE_URL}/validate-token`, {
+      const response = await fetch(`${API_URL}/validate-token`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

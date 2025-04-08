@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Trash2, Edit} from "lucide-react";
 import { updateInventoryItem, deleteInventoryItem, InventoryItem as InventoryItemType } from '@/services/api';
 import { fetchWithAuth } from '@/services/apiUtils';
+import styles from './View_Inventory.module.css';
 
 interface InventoryItemWithMin extends InventoryItemType {
   minQuantity?: number;
@@ -177,13 +178,13 @@ const ViewInventory: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className={styles.container}>
       {/* Show action messages */}
       {actionMessage && (
-        <div className={`p-4 mb-4 rounded ${
+        <div className={`${styles.actionMessage} ${
           actionMessage.type === 'success' 
-            ? 'bg-green-50 text-green-700 border border-green-200' 
-            : 'bg-red-50 text-red-700 border border-red-200'
+            ? styles.actionMessageSuccess 
+            : styles.actionMessageError
         }`}>
           {actionMessage.text}
         </div>
@@ -191,8 +192,8 @@ const ViewInventory: React.FC = () => {
       
       {/* Edit form */}
       {isEditing && selectedItem && (
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h2 className="text-lg font-medium mb-4">Edit Item</h2>
+        <div className={styles.editFormContainer}>
+          <h2 className={styles.editFormTitle}>Edit Item</h2>
           
           <div className="space-y-4">
             <div>
@@ -276,33 +277,33 @@ const ViewInventory: React.FC = () => {
           No inventory items found. Add your first item to get started!
         </div>
       ) : (
-        <Table>
+        <Table className={styles.table}>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Quantity</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className={styles.tableHeader}>Name</TableHead>
+              <TableHead className={styles.tableHeader}>Quantity</TableHead>
+              <TableHead className={styles.tableHeader}>Price</TableHead>
+              <TableHead className={styles.tableHeader}>Status</TableHead>
+              <TableHead className={styles.tableHeader}>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {Array.isArray(inventoryItems) ? inventoryItems.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.name}</TableCell>
-                <TableCell>{item.quantity}</TableCell>
-                <TableCell>${item.price.toFixed(2)}</TableCell>
-                <TableCell>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+              <TableRow key={item.id} className={styles.tableRow}>
+                <TableCell className={styles.tableCell}>{item.name}</TableCell>
+                <TableCell className={styles.tableCell}>{item.quantity}</TableCell>
+                <TableCell className={styles.tableCell}>${item.price.toFixed(2)}</TableCell>
+                <TableCell className={styles.tableCell}>
+                  <span className={`${styles.statusBadge} ${
                     item.quantity < (item.minQuantity || 0) 
-                      ? 'bg-red-100 text-red-800' 
-                      : 'bg-green-100 text-green-800'
+                      ? styles.statusBadgeLowStock 
+                      : styles.statusBadgeInStock
                   }`}>
                     {item.quantity < (item.minQuantity || 0) ? 'Low Stock' : 'In Stock'}
                   </span>
                 </TableCell>
-                <TableCell>
-                  <div className="flex space-x-1">
+                <TableCell className={styles.tableCell}>
+                  <div className={styles.buttonGroup}>
                     <Button 
                       variant="ghost" 
                       size="icon"

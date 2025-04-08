@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createEarning } from '@/services/api';
 import { useAuth } from '@/components/auth/AuthProvider';
+import styles from './styles/AddEarning.module.css';
 
 const AddEarning: React.FC = () => {
   const auth = useAuth();
@@ -59,70 +60,70 @@ const AddEarning: React.FC = () => {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Add New Earning</h1>
-      <div className="bg-white shadow rounded-lg p-6">
-        {error && <div className="text-red-500 mb-4">{error}</div>}
-        {success && <div className="text-green-500 mb-4">Earning added successfully!</div>}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="date" className="block text-sm font-medium text-gray-700">Date</label>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Add New Earning</h1>
+      <div className={styles.formContainer}>
+        {error && <div className={styles.error}>{error}</div>}
+        {success && <div className={styles.success}>Earning added successfully!</div>}
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.inputGroup}>
+            <label htmlFor="date" className={styles.label}>Date</label>
             <input
               type="date"
               id="date"
               value={earning.date}
               onChange={(e) => setEarning({...earning, date: e.target.value})}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className={styles.input}
               required
             />
           </div>
-          <div>
-            <label htmlFor="hourlyRate" className="block text-sm font-medium text-gray-700">Hourly Rate</label>
+          <div className={styles.inputGroup}>
+            <label htmlFor="hourlyRate" className={styles.label}>Hourly Rate</label>
             <input
               type="number"
               id="hourlyRate"
               value={earning.hourlyRate}
               onChange={(e) => setEarning({...earning, hourlyRate: e.target.value})}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className={styles.input}
               step="0.01"
             />
           </div>
-          <div>
-            <label htmlFor="hours" className="block text-sm font-medium text-gray-700">Hours Worked</label>
+          <div className={styles.inputGroup}>
+            <label htmlFor="hours" className={styles.label}>Hours Worked</label>
             <input
               type="number"
               id="hours"
               value={earning.hours}
               onChange={(e) => setEarning({...earning, hours: e.target.value})}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className={styles.input}
               step="0.01"
             />
           </div>
-          <div>
-            <label htmlFor="cashTips" className="block text-sm font-medium text-gray-700">Cash Tips</label>
+          <div className={styles.inputGroup}>
+            <label htmlFor="cashTips" className={styles.label}>Cash Tips</label>
             <input
               type="number"
               id="cashTips"
               value={earning.cashTips}
               onChange={(e) => setEarning({...earning, cashTips: e.target.value})}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className={styles.input}
               step="0.01"
             />
           </div>
-          <div>
-            <label htmlFor="salary" className="block text-sm font-medium text-gray-700">Salary</label>
+          <div className={styles.inputGroup}>
+            <label htmlFor="salary" className={styles.label}>Salary</label>
             <input
               type="number"
               id="salary"
               value={earning.salary}
               onChange={(e) => setEarning({...earning, salary: e.target.value})}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className={styles.input}
               step="0.01"
             />
           </div>
           <button
             type="submit"
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className={styles.submitButton}
             disabled={loading}
           >
             {loading ? 'Adding...' : 'Add Earning'}

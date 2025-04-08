@@ -1,7 +1,22 @@
 import ky from 'ky';
 
-// Get and store the API URL
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://76.121.92.139:8000';
+// Get and store the API URL with better fallback handling
+export const API_URL = (() => {
+  // First try the environment variable
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  
+  // If environment variable isn't available, try to determine from window location
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    return `http://${hostname}:8000`;
+  }
+  
+  // Final fallback for server-side rendering
+  return 'http://localhost:8000';
+})();
+
 console.log('API URL configured as:', API_URL);
 
 // Create ky instance with custom config
@@ -55,7 +70,10 @@ export async function fetchWithAuth<T>(
   options: RequestInit = {}
 ): Promise<T> {
   try {
-    const response = await api(url, {
+    // Ensure the URL does not start with a slash
+    const sanitizedUrl = url.startsWith('/') ? url.slice(1) : url;
+
+    const response = await api(sanitizedUrl, {
       method: options.method || 'GET',
       json: options.body ? JSON.parse(options.body as string) : undefined,
       headers: options.headers,

@@ -9,6 +9,21 @@ from sqlalchemy.orm import relationship  # Added relationship import
 # Local imports
 from settings.db_settings import Base, engine  # Updated import
 
+# Define a base class for all user-related models
+class UserBase(Base):
+    __abstract__ = True
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    email = Column(String, unique=True, index=True)
+    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+class Account(UserBase):
+    __tablename__ = 'accounts'
+    password = Column(String)
+    spending_limit = Column(Float, default=0.0)
+    monthly_savings_goal = Column(Float, default=0.0)
+    feedback = relationship("Feedback", back_populates="user")
+
 # Database models
 class Expense(Base):
     __tablename__ = 'expenses'
@@ -70,17 +85,6 @@ class FinancialOverview(Base):
     end_of_week = Column(DateTime)
     unused_daily_limit = Column(Float, default=0.0)
     timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-
-class Account(Base):
-    __tablename__ = 'accounts'
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True)
-    password = Column(String)
-    email = Column(String, unique=True, index=True)
-    spending_limit = Column(Float, default=0.0)
-    monthly_savings_goal = Column(Float, default=0.0)
-    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    feedback = relationship("Feedback", back_populates="user")  # Added relationship
 
 class SharedCalendarEvent(Base):
     __tablename__ = 'calendar_events'
