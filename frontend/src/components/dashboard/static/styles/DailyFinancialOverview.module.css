@@ -1,0 +1,146 @@
+.overviewContainer {
+  background-color: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.date {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.scoreSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 0;
+  position: relative;
+}
+
+.scoreValue {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  transition: color 0.3s ease;
+}
+
+.positive {
+  color: #4caf50; /* Green */
+}
+
+.neutral {
+  color: #9e9e9e; /* Gray */
+}
+
+.negative {
+  color: #f44336; /* Red */
+}
+
+.slightlyNegative {
+  color: #ff9800; /* Orange */
+}
+
+.breakdown {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.category {
+  display: flex;
+  flex-direction: column;
+}
+
+.categoryLabel {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin-bottom: 0.5rem;
+}
+
+.categoryValue {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.earningsValue {
+  color: #4caf50; /* Green */
+}
+
+.expensesValue {
+  color: #f44336; /* Red */
+}
+
+.progressBar {
+  width: 100%;
+  height: 6px;
+  background-color: var(--accent);
+  border-radius: 3px;
+  margin-top: 1rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.earningsBar {
+  background-color: #4caf50; /* Green */
+}
+
+.expensesBar {
+  background-color: #f44336; /* Red */
+}
+
+.refreshButton {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  transition: background-color 0.2s;
+}
+
+.refreshButton:hover {
+  background-color: var(--accent);
+}
+
+.refreshIcon {
+  margin-right: 0.5rem;
+  font-size: 1rem;
+}
+
+@media (max-width: 640px) {
+  .breakdown {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}

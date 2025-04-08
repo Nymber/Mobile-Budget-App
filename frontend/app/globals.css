@@ -1,0 +1,169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light theme - refined colors for better visual hierarchy */
+    --background: 210 20% 98%;
+    --foreground: 215 25% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    /* Primary color - brightened for high visibility */
+    --primary: 212 95% 50%; /* Adjusted for more vibrancy */
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary color - adjusted for softer tones */
+    --secondary: 210 20% 90%;
+    --secondary-foreground: 215 25% 15%;
+
+    /* Muted tones - warmer for readability */
+    --muted: 210 20% 94%;
+    --muted-foreground: 215 35% 45%;
+
+    /* Accent color - more saturated */
+    --accent: 340 85% 66%; /* Adjusted for highlights */
+    --accent-foreground: 0 0% 100%;
+
+    /* Semantic colors with improved contrast */
+    --success: 142 75% 45%;       
+    --success-foreground: 0 0% 100%;
+    
+    --warning: 38 90% 55%;         
+    --warning-foreground: 0 0% 100%;
+    
+    --destructive: 358 80% 55%;    
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 20% 85%; /* Lighter border */
+    --input: 215 20% 90%;
+    --ring: 212 95% 60%;
+
+    --radius: 0.75rem; /* Consistent border radius */
+
+    /* Chart colors - refined for harmony */
+    --chart-1: 212 85% 68%;
+    --chart-2: 152 75% 55%;
+    --chart-3: 38 90% 62%;
+    --chart-4: 264 78% 75%;
+    --chart-5: 340 85% 66%;
+  }
+
+  .dark {
+    /* Dark theme - more contrast and vibrancy */
+    --background: 215 25% 15%;
+    --foreground: 210 20% 95%;
+    --card: 217 25% 18%;
+    --card-foreground: 210 20% 95%;
+    --popover: 217 25% 18%;
+    --popover-foreground: 210 20% 95%;
+
+    /* Bright primary for visibility in dark mode */
+    --primary: 212 90% 70%;
+    --primary-foreground: 215 25% 10%;
+
+    /* Enhanced secondary for better contrast */
+    --secondary: 217 25% 30%;
+    --secondary-foreground: 210 20% 95%;
+
+    /* Muted tones for better accessibility */
+    --muted: 217 25% 30%;
+    --muted-foreground: 210 20% 80%;
+
+    /* Brighter accents in dark mode */
+    --accent: 340 85% 70%;
+    --accent-foreground: 215 25% 10%;
+
+    /* Semantic colors brightened for dark mode */
+    --success: 142 75% 55%;
+    --success-foreground: 215 25% 10%;
+
+    /* Enhanced warning and destructive colors */
+    --warning: 38 90% 60%;
+    --warning-foreground: 215 25% 10%;
+
+    --destructive: 358 75% 60%;
+    --destructive-foreground: 215 25% 10%;
+
+    --border: 217 25% 40%;
+    --input: 217 25% 40%;
+    --ring: 212 90% 70%;
+
+    /* Brighter chart colors for dark mode */
+    --chart-1: 212 85% 75%;
+    --chart-2: 152 75% 65%;
+    --chart-3: 38 90% 70%;
+    --chart-4: 264 78% 80%;
+    --chart-5: 340 85% 70%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(215, 20%, 85%); /* Replace with the actual border color */
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: 'Inter', sans-serif; /* Using a readable font */
+    line-height: 1.6;
+    padding: 1rem; /* Consistent padding */
+  }
+
+  button {
+    @apply bg-primary text-primary-foreground rounded-lg px-4 py-2 shadow-md;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s; /* Added box-shadow transition for smoother interaction */
+  }
+
+  button:hover {
+    @apply bg-primary/80 shadow-lg; /* Encourage hover with shadow */
+    transform: scale(1.03); /* Subtle scale effect on hover */
+  }
+
+  input, textarea {
+    @apply bg-input text-foreground border border-border rounded-lg py-2 px-3;
+    transition: border-color 0.3s, box-shadow 0.3s; /* Extra transition for markings */
+  }
+
+  input:focus, textarea:focus {
+    @apply outline-none border-ring shadow-lg; /* Enhanced focus indication */
+  }
+
+  .text-foreground {
+    color: hsl(0, 0%, 17%); /* Slightly darker text for better contrast */
+  }
+
+  .bg-input {
+    background-color: hsl(0, 0%, 98%); /* Maintain lighter input background */
+    color: hsl(0, 0%, 15%); /* Ensure contrast */
+    border: 1px solid hsl(0, 0%, 82%); /* Defined border for clarity */
+  }
+}
+
+@layer utilities {
+  .border-border {
+    @apply border border-gray-300; /* Use a default border color */
+  }
+  .bg-background {
+    @apply bg-gray-50; /* Use a light gray background */
+  }
+  .text-foreground {
+    @apply text-gray-900; /* Use a dark gray text color */
+  }
+  .bg-primary {
+    @apply bg-blue-500; /* Fallback for primary color */
+  }
+  .text-primary-foreground {
+    @apply text-white; /* Fallback for primary foreground color */
+  }
+  .hover\:bg-primary {
+    @apply hover:bg-blue-600; /* Fallback for hover state */
+  }
+  .border-ring {
+    @apply border-blue-400; /* Fallback for ring color */
+  }
+}

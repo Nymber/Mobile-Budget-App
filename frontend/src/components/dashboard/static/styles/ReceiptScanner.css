@@ -1,0 +1,88 @@
+.receipt-scanner {
+  @apply max-w-3xl mx-auto p-5 bg-card text-card-foreground rounded-lg shadow-md;
+}
+
+.camera-container {
+  @apply relative w-full mb-5;
+}
+
+.camera-feed {
+  @apply w-full max-h-96 rounded-lg object-cover border border-border;
+}
+
+.capture-button, .cancel-button {
+  @apply mx-2 my-2 px-5 py-2 rounded-lg text-white shadow-md transition-all;
+}
+
+.capture-button {
+  @apply bg-primary hover:bg-primary/80;
+}
+
+.cancel-button {
+  @apply bg-destructive hover:bg-destructive/80;
+}
+
+.scanner-options {
+  @apply flex justify-center gap-5 my-5;
+}
+
+.scan-button, .upload-button {
+  @apply px-6 py-3 bg-primary text-primary-foreground rounded-lg text-lg shadow-md transition-all;
+}
+
+.upload-button {
+  @apply bg-accent hover:bg-accent/80;
+}
+
+.receipt-preview {
+  @apply w-full max-h-72 mx-auto rounded-lg border border-border bg-muted bg-center bg-no-repeat bg-contain;
+}
+
+.receipt-details {
+  @apply bg-muted p-5 rounded-lg mt-5 shadow-md;
+}
+
+.form-group {
+  @apply mb-4;
+}
+
+.form-group label {
+  @apply block mb-2 font-bold text-foreground; /* Ensure text is dark and bold */
+}
+
+.form-group input,
+.form-group select {
+  @apply w-full px-3 py-2 border border-border rounded-lg bg-input text-foreground focus:outline-none focus:border-ring; /* Improve input field contrast */
+}
+
+.save-button {
+  @apply bg-primary text-primary-foreground px-5 py-2 rounded-lg text-lg shadow-md mt-3 transition-all hover:bg-primary/80;
+}
+
+.error-message {
+  @apply bg-destructive/10 text-destructive p-3 my-3 rounded-lg border-l-4 border-destructive;
+}
+
+.success-message {
+  @apply bg-primary/10 text-primary p-3 my-3 rounded-lg border-l-4 border-primary;
+}
+
+.loading-indicator {
+  @apply flex justify-center items-center p-5 italic text-muted-foreground;
+}
+
+.disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.hidden-input, .hidden-canvas {
+  @apply hidden;
+}
+
+.receipt-image-container {
+  @apply w-full max-w-md mx-auto h-72 relative;
+}
+
+.receipt-preview {
+  @apply w-full h-full rounded-lg bg-center bg-no-repeat bg-contain;
+}

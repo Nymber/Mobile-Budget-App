@@ -1,22 +1,23 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  content: ["./app/**/*.{html,js,jsx,ts,tsx}"], // Adjust paths to match your project structure
   theme: {
     extend: {
+      borderColor: {
+        border: 'hsl(215, 20%, 85%)', // Define the custom border color
+        ring: 'hsl(212, 95%, 60%)', // Define the ring color
+      },
       colors: {
+        border: 'hsl(0, 0%, 80%)', // Define the border color
+        background: 'hsl(0, 0%, 98%)', // Define the background color
+        foreground: 'hsl(0, 0%, 15%)', // Define the foreground color
         primary: {
-          DEFAULT: '#2563eb',
-          dark: '#1d4ed8',
-          light: '#3b82f6'
+          DEFAULT: 'hsl(212, 95%, 50%)', // Define the primary color
+          foreground: 'hsl(0, 0%, 100%)', // Define the primary foreground color
+          hover: 'hsl(212, 95%, 45%)', // Define the hover state for primary
+          light: 'hsl(212, 95%, 90%)', // Define a lighter shade for primary
         },
-        surface: '#ffffff',
-        background: '#f8fafc',
-        error: '#ef4444',
-        success: '#22c55e'
-      }
-    }
+      },
+    },
   },
-  plugins: [
-    require('@tailwindcss/forms')
-  ]
+  plugins: [],
 };

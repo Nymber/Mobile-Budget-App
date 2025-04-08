@@ -1,0 +1,179 @@
+.container {
+  max-width: 48rem; /* max-w-3xl */
+  margin: 0 auto; /* mx-auto */
+  padding: 1.25rem; /* p-5 */
+  background-color: var(--card); /* bg-card */
+  color: var(--card-foreground); /* text-card-foreground */
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow: var(--shadow-md); /* shadow-md */
+}
+
+.cameraContainer {
+  position: relative; /* relative */
+  width: 100%; /* w-full */
+  margin-bottom: 1.25rem; /* mb-5 */
+}
+
+.video {
+  width: 100%; /* w-full */
+  max-height: 24rem; /* max-h-96 */
+  border-radius: 0.5rem; /* rounded-lg */
+  object-fit: cover; /* object-cover */
+  border: 1px solid var(--border); /* border-border */
+}
+
+.canvas {
+  display: none; /* hidden */
+}
+
+.controls {
+  display: flex; /* flex */
+  gap: 1.25rem; /* gap-5 */
+  margin: 1.25rem 0; /* my-5 */
+  justify-content: center; /* justify-center */
+}
+
+.preview {
+  margin-top: 1.25rem; /* mt-5 */
+  text-align: center; /* text-center */
+}
+
+.previewImage {
+  max-width: 100%; /* w-full */
+  height: auto; /* h-auto */
+  border-radius: 0.5rem; /* rounded-lg */
+  object-fit: contain; /* bg-contain */
+}
+
+.alert {
+  margin-bottom: 1rem; /* mb-4 */
+}
+
+.captureButton,
+.cancelButton {
+  margin: 0.5rem; /* mx-2 my-2 */
+  padding: 0.625rem 1.25rem; /* px-5 py-2 */
+  border-radius: 0.5rem; /* rounded-lg */
+  color: white; /* text-white */
+  box-shadow: var(--shadow-md); /* shadow-md */
+  transition: all 0.2s; /* transition-all */
+}
+
+.captureButton {
+  background-color: var(--primary); /* bg-primary */
+  &:hover {
+    background-color: var(--primary-hover); /* hover:bg-primary/80 */
+  }
+}
+
+.cancelButton {
+  background-color: var(--destructive); /* bg-destructive */
+  &:hover {
+    background-color: var(--destructive-hover); /* hover:bg-destructive/80 */
+  }
+}
+
+.scanButton,
+.uploadButton {
+  padding: 0.75rem 1.5rem; /* px-6 py-3 */
+  background-color: var(--primary); /* bg-primary */
+  color: var(--primary-foreground); /* text-primary-foreground */
+  border-radius: 0.5rem; /* rounded-lg */
+  font-size: 1.125rem; /* text-lg */
+  box-shadow: var(--shadow-md); /* shadow-md */
+  transition: all 0.2s; /* transition-all */
+}
+
+.uploadButton {
+  background-color: var(--accent); /* bg-accent */
+  &:hover {
+    background-color: var(--accent-hover); /* hover:bg-accent/80 */
+  }
+}
+
+.receiptDetails {
+  background-color: var(--muted); /* bg-muted */
+  padding: 1.25rem; /* p-5 */
+  border-radius: 0.5rem; /* rounded-lg */
+  margin-top: 1.25rem; /* mt-5 */
+  box-shadow: var(--shadow-md); /* shadow-md */
+}
+
+.formGroup {
+  margin-bottom: 1rem; /* mb-4 */
+}
+
+.formGroup label {
+  display: block; /* block */
+  margin-bottom: 0.5rem; /* mb-2 */
+  font-weight: bold; /* font-bold */
+  color: var(--foreground); /* text-foreground */
+}
+
+.formGroup input,
+.formGroup select {
+  width: 100%; /* w-full */
+  padding: 0.5rem; /* px-3 py-2 */
+  border: 1px solid var(--border); /* border-border */
+  border-radius: 0.5rem; /* rounded-lg */
+  background-color: var(--input); /* bg-input */
+  color: var(--foreground); /* text-foreground */
+  outline: none; /* focus:outline-none */
+  &:focus {
+    border-color: var(--ring); /* focus:border-ring */
+  }
+}
+
+.saveButton {
+  background-color: var(--primary); /* bg-primary */
+  color: var(--primary-foreground); /* text-primary-foreground */
+  padding: 0.625rem 1.25rem; /* px-5 py-2 */
+  border-radius: 0.5rem; /* rounded-lg */
+  font-size: 1.125rem; /* text-lg */
+  box-shadow: var(--shadow-md); /* shadow-md */
+  margin-top: 0.75rem; /* mt-3 */
+  transition: all 0.2s; /* transition-all */
+  &:hover {
+    background-color: var(--primary-hover); /* hover:bg-primary/80 */
+  }
+}
+
+.errorMessage {
+  background-color: var(--destructive-light); /* bg-destructive/10 */
+  color: var(--destructive); /* text-destructive */
+  padding: 0.75rem; /* p-3 */
+  margin: 0.75rem 0; /* my-3 */
+  border-radius: 0.5rem; /* rounded-lg */
+  border-left: 4px solid var(--destructive); /* border-l-4 border-destructive */
+}
+
+.successMessage {
+  background-color: var(--primary-light); /* bg-primary/10 */
+  color: var(--primary); /* text-primary */
+  padding: 0.75rem; /* p-3 */
+  margin: 0.75rem 0; /* my-3 */
+  border-radius: 0.5rem; /* rounded-lg */
+  border-left: 4px solid var(--primary); /* border-l-4 border-primary */
+}
+
+.loadingIndicator {
+  display: flex; /* flex */
+  justify-content: center; /* justify-center */
+  align-items: center; /* items-center */
+  padding: 1.25rem; /* p-5 */
+  font-style: italic; /* italic */
+  color: var(--muted-foreground); /* text-muted-foreground */
+}
+
+.disabled {
+  opacity: 0.5; /* opacity-50 */
+  cursor: not-allowed; /* cursor-not-allowed */
+}
+
+.hiddenInput {
+  display: none; /* hidden */
+}
+
+.hiddenCanvas {
+  display: none; /* hidden */
+}

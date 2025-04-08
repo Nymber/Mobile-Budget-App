@@ -1,3 +1,7 @@
+# This file contains the functions that are used by the scheduler to run tasks at a specific time. 
+# The update_spending_limit function updates the spending limit for all users in the database. 
+# While the reset_repeating_tasks function resets all repeating tasks to incomplete. 
+# These functions are run at midnight every day using the BackgroundScheduler class from the apscheduler library.
 from datetime import datetime, timezone
 import calculations as calculations
 from calculations import calculate_daily_limit as calculated

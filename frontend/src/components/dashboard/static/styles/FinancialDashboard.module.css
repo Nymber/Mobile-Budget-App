@@ -1,0 +1,281 @@
+.financialDashboard {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.dashboardContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: var(--font-sans, 'Inter', sans-serif);
+}
+
+.dashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.dashboardHeader h1 {
+  font-size: 2rem;
+  color: hsl(var(--foreground));
+  margin: 0;
+}
+
+.scoreCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  color: hsl(var(--foreground));
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: hsl(var(--muted)); /* Default color */
+}
+
+/* Apply colors based on data attributes */
+.scoreCard[data-score-color="#4caf50"] {
+  background-color: #4caf50;
+}
+
+.scoreCard[data-score-color="#8bc34a"] {
+  background-color: #8bc34a;
+}
+
+.scoreCard[data-score-color="#9e9e9e"] {
+  background-color: #9e9e9e;
+}
+
+.scoreCard[data-score-color="#ff9800"] {
+  background-color: #ff9800;
+}
+
+.scoreCard[data-score-color="#f44336"] {
+  background-color: #f44336;
+}
+
+.scoreCard:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.scoreHeader {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.scoreValue {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Increase min-width for better readability */
+  gap: 30px; /* Increase gap for better spacing */
+  margin-bottom: 40px; /* Add more margin for separation */
+}
+
+.chartCard {
+  background-color: hsl(var(--card));
+  border-radius: var(--radius);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow for better focus */
+  padding: 25px; /* Increase padding for better spacing */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chartCard:hover {
+  transform: translateY(-8px); /* Slightly more pronounced hover effect */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Enhance hover shadow */
+}
+
+.chartCard h2 {
+  font-size: 1.6rem; /* Increase font size for better readability */
+  color: hsl(var(--foreground));
+  margin-top: 0;
+  margin-bottom: 25px; /* Increase spacing below the title */
+  border-bottom: 2px solid hsl(var(--border)); /* Slightly thicker border for emphasis */
+  padding-bottom: 12px;
+}
+
+.chartContainer {
+  height: 350px; /* Increase height for better chart visibility */
+  margin: 0 -15px; /* Adjust margin for better alignment */
+}
+
+
+.budgetSection {
+  background-color: hsl(var(--card));
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.budgetSection h2 {
+  font-size: 1.4rem;
+  color: hsl(var(--foreground));
+  margin-top: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid hsl(var(--border));
+  padding-bottom: 10px;
+}
+
+.progressContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.progressItem {
+  padding: 15px;
+  background-color: hsl(var(--muted));
+  border-radius: var(--radius);
+  transition: transform 0.2s ease;
+}
+
+.progressItem:hover {
+  transform: translateY(-3px);
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.categoryName {
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.categoryValues {
+  font-size: 0.9rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.progressBarContainer {
+  height: 10px;
+  background-color: hsl(var(--border));
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.5s ease, background-color 0.3s ease;
+}
+
+/* Budget status classes */
+.overBudget {
+  background-color: hsl(var(--destructive));
+}
+
+.nearBudget {
+  background-color: hsl(var(--accent));
+}
+
+.underBudget {
+  background-color: hsl(var(--primary));
+}
+
+.progressFooter {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.remaining {
+  font-weight: 500;
+}
+
+.percentage {
+  font-weight: 600;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+}
+
+.loadingIndicator {
+  width: 40px;
+  height: 40px;
+  border: 4px solid hsl(var(--muted));
+  border-top: 4px solid hsl(var(--primary));
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.errorContainer {
+  text-align: center;
+  padding: 50px 20px;
+  background-color: hsl(var(--destructive), 0.1);
+  border-radius: var(--radius);
+  margin: 20px 0;
+}
+
+.errorContainer h2 {
+  color: hsl(var(--destructive));
+  margin-bottom: 15px;
+}
+
+.retryButton {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.2s ease;
+}
+
+.retryButton:hover {
+  background-color: hsl(var(--primary), 0.8);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .scoreCard {
+    margin-top: 20px;
+    align-self: center;
+  }
+
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .progressContainer {
+    grid-template-columns: 1fr;
+  }
+}

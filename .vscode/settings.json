@@ -1,3 +1,9 @@
 {
-    "python.pythonPath": "c:\\Users\\badaw\\OneDrive\\Documents\\GitHub\\Mobile-Budget-App\\backend\\.venv\\Scripts\\python.exe"
+    "python.pythonPath": "c:\\Users\\badaw\\OneDrive\\Documents\\GitHub\\Mobile-Budget-App\\backend\\venv\\Scripts\\python.exe",
+    "git.ignoreLimitWarning": true,
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "python-envs.pythonProjects": [],
+    "python.analysis.extraPaths": [
+        "./backend/routes"
+    ]
 }

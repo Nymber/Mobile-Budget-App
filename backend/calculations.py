@@ -1,3 +1,6 @@
+# This file contains all financial calculation logic.
+# It is used to calculate daily limits, monthly earnings, and other financial metrics.
+
 from typing import Union
 from datetime import timedelta, datetime, timezone
 from sqlalchemy import func
@@ -5,6 +8,7 @@ from db_env import Account, Expense, DailyEarning, FinancialOverview  # Add Fina
 from settings.db_settings import SessionLocal  # Updated import
 import env as env
 
+# Account functions
 def get_account(session, username):
     """Retrieve account information for given username."""
     return session.query(Account).filter_by(username=username).first()
@@ -26,12 +30,19 @@ def verify_and_get_account(session, username) -> Union[Account, int]:
     account = get_verified_account(session, username)
     return account if account else 0
 
+
 def get_local_date(utc_date):
     """Convert UTC date to local date"""
     # Assuming EST timezone (UTC-5). Adjust offset as needed for your timezone
     local_date = utc_date - timedelta(hours=5)
     return local_date.replace(hour=0, minute=0, second=0, microsecond=0)
 
+# Financial calculations
+def calculate_daily_score(username, date):
+    daily_earnings = calculate_daily_earnings(username, date)
+    daily_expenses = calculate_total_money_spent_today(username, date)
+    return daily_earnings - daily_expenses
+    
 def calculate_daily_limit(username, current_date):
     session = SessionLocal()
     try:
@@ -260,5 +271,3 @@ def calculate_monthly_earnings(username, current_date=None):
         return 0
     finally:
         session.close()
-
-# Ensure to add session management to other functions similarly

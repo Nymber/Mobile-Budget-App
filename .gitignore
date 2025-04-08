@@ -1,0 +1,48 @@
+# Backend
+/backend/venv
+/backend/instance
+/backend/.env
+/backend/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+# Frontend
+/frontend/node_modules
+/frontend/.env
+/frontend/.nuxt
+/frontend/.next
+/frontend/dist
+/frontend/out
+/frontend/.cache
+/frontend/.turbo
+
+# IDE settings
+.vscode/
+.idea/
+*.iml
+
+# System files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.bak
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Coverage
+coverage/
+*.lcov
+
+# Build artifacts
+build/
+*.lock
+*.tmp
+*.tsbuildinfo
