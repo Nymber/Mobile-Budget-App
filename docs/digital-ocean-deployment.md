@@ -64,6 +64,65 @@ git clone https://github.com/yourusername/Mobile-Budget-App.git
 cd Mobile-Budget-App
 ```
 
+#### Handling "Killed" Errors During Build
+
+If you encounter a "Killed" error during the npm installation step (e.g., `RUN npm ci` or `npm install`), this indicates that the build process ran out of memory. Here are ways to resolve this:
+
+1. Allocate swap space to your droplet:
+   ```bash
+   # Create a 2GB swap file
+   fallocate -l 2G /swapfile
+   chmod 600 /swapfile
+   mkswap /swapfile
+   swapon /swapfile
+   # Make swap permanent
+   echo '/swapfile none swap sw 0 0' | tee -a /etc/fstab
+   ```
+
+2. Modify your Dockerfile to use NodeJS with lower memory usage:
+   ```dockerfile
+   # Add NODE_OPTIONS before npm commands
+   RUN NODE_OPTIONS="--max_old_space_size=512" npm ci --no-audit --no-fund --prefer-offline
+   ```
+
+3. Use a droplet with more memory (4GB RAM minimum recommended for Node.js builds)
+
+#### Handling "COPY failed" Errors During Build
+
+If you encounter an error like `COPY failed: stat app/next.config.js: file does not exist` during the Docker build process, you'll need to modify your Dockerfile. This happens when your Next.js project doesn't have a configuration file but the Dockerfile expects one.
+
+To fix this issue:
+
+1. Create an empty Next.js config file in your project root:
+   ```bash
+   echo 'module.exports = {}' > next.config.js
+   ```
+
+2. Or modify your Dockerfile to make the copy step conditional:
+   ```dockerfile
+   # Replace the failing COPY command with this
+   COPY --from=builder --chown=nextjs:nodejs /app/package.json ./
+   COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+   COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+   
+   # Copy next.config.js only if it exists
+   RUN if [ -f /app/next.config.js ]; then \
+       cp /app/next.config.js ./next.config.js; \
+       else echo 'module.exports = {}' > ./next.config.js; \
+   fi
+   ```
+
+3. If using docker-compose, update your build command to ensure the file exists before building:
+   ```yaml
+   services:
+     frontend:
+       build:
+         context: ./frontend
+         args:
+           - NODE_ENV=production
+       command: sh -c '[ -f next.config.js ] || echo "module.exports = {}" > next.config.js && npm start'
+   ```
+
 Build and start the containers:
 
 ```bash

@@ -1,5 +1,5 @@
 # Stage 1: Dependencies and build
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -11,9 +11,7 @@ ENV NODE_OPTIONS="--max-old-space-size=4096"
 COPY package.json package-lock.json* ./
 
 # Install dependencies with a more memory-efficient approach
-# Using npm ci --no-audit --no-fund to reduce memory usage
 RUN npm ci --no-audit --no-fund --prefer-offline || \
-    # Fallback to regular npm install if npm ci fails
     npm install --no-audit --no-fund --prefer-offline
 
 # Copy application code
@@ -23,29 +21,32 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Production image
-FROM node:18-alpine AS runner
+FROM node:20-alpine AS runner
 
 # Set working directory
 WORKDIR /app
 
 # Set environment variables
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV PORT 3000
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
 
 # Add a non-root user
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# Copy only necessary files from the builder stage
-COPY --from=builder --chown=nextjs:nodejs /app/next.config.js ./
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+# Copy package.json and required build artifacts
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+# Create public directory
+RUN mkdir -p ./public
+COPY --from=builder --chown=nextjs:nodejs /app/public/ ./public/
 
-# Create a health check endpoint
-RUN echo '{"status":"ok"}' > ./public/api/health.json
+# Conditionally copy next.config.js or create a minimal one if it doesn't exist
+RUN if [ -f /app/next.config.js ]; then \
+    cp /app/next.config.js ./next.config.js; \
+    else echo 'module.exports = {}' > ./next.config.js; \
+fi
 
 # Switch to non-root user
 USER nextjs
